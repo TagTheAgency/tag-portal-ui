@@ -1,14 +1,23 @@
 import React, { Component } from 'react';
+import { Route, Redirect } from 'react-router-dom';
 import GoogleLogin from 'react-google-login';
+import Authentication from './components/Authentication.js';
 
 const responseGoogle = (response) => {
 	console.log(response);
+	Authentication.authenticate(response);
 }
 
 class Login extends Component {
 
-
 	render() {
+		if (Authentication.isAuthenticated()) {
+			return (
+				<Route>
+					<Redirect to={{ pathname: '/dashboard' }} />
+				</Route>
+			)
+		}
 		return (
 				<div>
 				<GoogleLogin
