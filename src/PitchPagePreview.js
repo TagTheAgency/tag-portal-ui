@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import PDF from 'react-pdf-js';
+
 
 const PageTypes = [
   "STANDARD", "RATE_CARD", "CREATIVE_PROCESS", "TS_AND_CS"
@@ -10,11 +10,11 @@ class PitchPage extends Component {
     super(props);
     this.state = {
       id: props.page.id,
-      pitchId: props.pitch,
+      pitchId: -1,
       title: props.page.title == null ? '' : props.page.title,
       implementation: props.page.implementation,
       text: props.page.text == null ? '' : props.page.text,
-      order: props.page.order,
+      order: props.page.order
     };
     console.log('CSJM', props);
     console.log('state', this.state);
@@ -32,10 +32,6 @@ class PitchPage extends Component {
   }
 
   render() {
-    const pdfLink = 'http://localhost:82/tagportal/' + this.state.pitchId + '/' + 'preview.pdf';
-    if (this.state.pitchId < 0) {
-      return (<div></div>)
-    }
     return (
 
       <div data-row-id={this.state.id} data-page-order={this.state.order} className="pageTemplate">
@@ -73,13 +69,6 @@ class PitchPage extends Component {
                   </div>
                 </div>
                 <div className="col-lg-7" style={{position:'relative'}}>
-                  <PDF
-                    file={pdfLink}
-                    onDocumentComplete={this.onDocumentComplete}
-                    onPageComplete={this.onPageComplete}
-                    page={this.state.order + 2}
-                    scale={0.8}
-                  />
                   <canvas id="the-canvas{this.state.id}"></canvas>
                 </div>
 

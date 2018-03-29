@@ -17,6 +17,12 @@ class Navigation extends React.Component {
 			            <span className="nav-link-text">Dashboard</span>
 			          </a>
 			        </li>
+							<li className="nav-item" data-toggle="tooltip" data-placement="right" title="Charts">
+								<a className="nav-link" href={process.env.PUBLIC_URL + '/pitch'}>
+									<i className="fa fa-fw fa-file-pdf-o"></i>
+									<span className="nav-link-text">Pitch documents</span>
+								</a>
+							</li>
 			        <li className="nav-item" data-toggle="tooltip" data-placement="right" title="Charts">
 			          <a className="nav-link" href="charts.html">
 			            <i className="fa fa-fw fa-area-chart"></i>

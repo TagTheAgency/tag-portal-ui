@@ -8,6 +8,17 @@ const responseGoogle = (response) => {
 	Authentication.authenticate(response);
 }
 
+const Button = () => (
+  <Route render={({ history}) => (
+    <button
+      type='button'
+      onClick={() => { history.push('/new-location') }}
+    >
+      Click Me!
+    </button>
+  )} />
+)
+
 class Login extends Component {
 
 	render() {
@@ -19,6 +30,7 @@ class Login extends Component {
 			)
 		}
 		return (
+
 				<div>
 				<GoogleLogin
 					clientId="238046755257-ki0kkc04d49j1cr110n54dfakrgmtuh5.apps.googleusercontent.com"
