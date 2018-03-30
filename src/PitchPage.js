@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import PDF from 'react-pdf-js';
+import PitchPageImage from './PitchPageImage.js';
+import ImageOverlay from './ImageOverlay.js';
+import './PitchPage.css';
 
 const PageTypes = [
   "STANDARD", "RATE_CARD", "CREATIVE_PROCESS", "TS_AND_CS"
@@ -15,10 +18,36 @@ class PitchPage extends Component {
       implementation: props.page.implementation,
       text: props.page.text == null ? '' : props.page.text,
       order: props.page.order,
+      images: props.page.images
     };
     console.log('CSJM', props);
     console.log('state', this.state);
     this.handleInputChange = this.handleInputChange.bind(this);
+
+    this.handleImageManualChange = this.handleImageManualChange.bind(this);
+    this.handleImageDragChange = this.handleImageDragChange.bind(this);
+  }
+
+  handleImageManualChange(image) {
+    const dimension = image.dimension;
+    const imageId = image.id;
+    const value = image.value;
+
+    const images = this.state.images;
+    const editedImage = images.find(el => el.id === imageId);
+    editedImage[dimension] = value;
+    this.setState({images: images});
+  }
+
+  handleImageDragChange(image) {
+    const dimension = image.dimension;
+    const imageId = image.id;
+
+    const images = this.state.images;
+    const editedImage = images.find(el => el.id === imageId);
+    editedImage.w = dimension.width;
+    editedImage.h = dimension.height;
+    this.setState({images: images});
   }
 
   handleInputChange(event) {
@@ -80,7 +109,10 @@ class PitchPage extends Component {
                     page={this.state.order + 2}
                     scale={0.8}
                   />
-                  <canvas id="the-canvas{this.state.id}"></canvas>
+                {this.state.images.map(image => (<PitchPageImage key={image.id} pitch={this.props.pitch} image={image} onChange={this.handleImageManualChange}/>))}
+                <div className="fileOverlay" onDragOver={(e)=>{e.preventDefault();return false;}} onDrop={(e)=>{e.preventDefault();return false;}}>
+                  {this.state.images.map(image => (<ImageOverlay key={image.id} pitch={this.props.pitch} image={image} onMove={this.handleImageManualChange} onChange={this.handleImageDragChange}/>))}
+                </div>
                 </div>
 
               </div>

@@ -1,0 +1,11 @@
+.fileOverlay {
+    position: absolute;
+    top: 0px;
+    left: 15px;
+    height: 476px;
+    width: 673px;
+}
+canvas {
+	border: 1px dashed grey;
+	padding: 1px;
+}
