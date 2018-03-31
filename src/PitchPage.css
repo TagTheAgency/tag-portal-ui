@@ -4,6 +4,7 @@
     left: 15px;
     height: 476px;
     width: 673px;
+    overflow: hidden;
 }
 canvas {
 	border: 1px dashed grey;

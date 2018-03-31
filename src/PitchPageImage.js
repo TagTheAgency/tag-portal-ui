@@ -21,8 +21,24 @@ class PitchPageImage extends Component {
     this.ratio = this.props.image.w / this.props.image.h;
 
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.removeImage = this.removeImage.bind(this);
+    this.updateImage = this.updateImage.bind(this);
   }
 
+  removeImage(event) {
+
+  }
+
+  updateImage(event) {
+    const updateURL = 'http://localhost:82/tagportal/'+this.props.pitch+'/'+this.props.image.pageId+'/image';
+    fetch(updateURL, {
+      method: 'PUT',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(this.props.image)
+    }).then(this.props.triggerPdfRefresh);
+  }
 
   handleInputChange(event) {
     const which = event.target;
@@ -60,11 +76,11 @@ class PitchPageImage extends Component {
 		    </div>
 			<div className="form-group col-md-2">
 			  <label style={{color:"white"}}>Update image</label>
-		      <button className="btn btn-primary imageUpdater">Update image</button>
+		      <button className="btn btn-primary imageUpdater" onClick={this.updateImage}>Update image</button>
 		    </div>
 			<div className="form-group col-md-2">
 			  <label style={{color:"white"}}>Remove image</label>
-		      <button className="btn btn-danger imageDeleter" data-image-id="${image.id }" data-page-id="${page.id }">Remove image</button>
+		      <button className="btn btn-danger imageDeleter" onClick={this.removeImage}>Remove image</button>
 		    </div>
 		</div>
     )

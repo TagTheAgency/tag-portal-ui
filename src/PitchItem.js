@@ -43,6 +43,10 @@ class PitchItem extends Component {
       })
       .then(data =>
          { if (data) this.setState(data) } );
+
+    fetch('http://localhost:82/tagportal/pageTypes')
+    .then(response => response.json())
+    .then(data => this.setState({"pageTypes":data}));
   }
 
   handleInputChange(event) {
@@ -84,7 +88,7 @@ class PitchItem extends Component {
 
             <div className="row">
               <div className="col-12">
-                {this.state.pages.map(page => <PitchPage key={page.id} page={page} pitch={this.state.id}/>)}
+                {this.state.pages.map(page => <PitchPage key={page.id} page={page} pitch={this.state.id} pitchPageTypes={this.state.pageTypes}/>)}
              </div>
            </div>
            <button onClick={this.addPage}>Add Page</button>

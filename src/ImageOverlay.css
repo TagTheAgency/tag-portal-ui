@@ -2,8 +2,9 @@
 	position:absolute;
 	border: 1px grey solid;
 	background: rgba(200, 54, 54, 0.5);
+  cursor: move;
 }
-.react-resizable-handle {
+.resizable-handle {
   position: absolute;
   width: 20px;
   height: 20px;
