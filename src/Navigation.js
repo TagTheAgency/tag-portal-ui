@@ -1,7 +1,12 @@
 import React from 'react';
-import Authentication from './components/Authentication.js';
+//import Authentication from './components/Authentication.js';
+import AuthService from './components/AuthService';
+
+const Auth = new AuthService();
+
 
 class Navigation extends React.Component {
+
 	render() {
 		return (
 			<nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
@@ -192,7 +197,7 @@ class Navigation extends React.Component {
 			            <a className="dropdown-item small" href="link">View all alerts</a>
 			          </div>
 			        </li>
-							<li className="nav-item" ><a className="nav-link">{Authentication.getUsername()}</a></li>
+							<li className="nav-item" ><a className="nav-link">{Auth.getProfile().name}</a></li>
 
 			        <li className="nav-item">
 			          <form className="form-inline my-2 my-lg-0 mr-lg-2">

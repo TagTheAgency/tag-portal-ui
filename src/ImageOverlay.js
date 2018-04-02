@@ -1,22 +1,10 @@
 import React, { Component } from 'react';
-import { Resizable, ResizableBox } from 'react-resizable';
 
 import './ImageOverlay.css';
 
 class ImageOverlay extends Component {
   constructor(props) {
     super(props);
-    console.log("image overlay props", props);
-    // this.state = {
-    //   id: props.image.id,
-    //   pageId: props.image.pageId,
-    //   pitchId: props.pitchId,
-    //   filename: props.image.filename,
-    //   x: props.image.x,
-    //   y: props.image.y,
-    //   w: props.image.w,
-    //   h: props.image.h
-    // };
 
     this.state = {
       offsetX: 0, offsetY: 0, offsetW: 0, throttle: false, move: "move"
@@ -31,21 +19,16 @@ class ImageOverlay extends Component {
   }
 
   resize = (event) => {
-    console.log("resizing");
     event.preventDefault();
     event.stopPropagation();
 
-    const newW = (event.clientX - this.state.offsetW + this.props.image.w);// - (this.props.image.x / 2 * 1.6));
+    const newW = (event.clientX - this.state.offsetW);// - (this.props.image.x / 2 * 1.6));
     const newH = (this.state.offsetY - event.clientY);
 
     if (!this.state.throttle) {
       this.setState({throttle: true});
 
       const adjustedW = newW / 0.8;//;+ (this.props.image.w / 2 * 1.6);
-      console.log("Moved mouseX: ", event.clientX);
-      console.log("state.offsetW:", this.state.offsetW);
-      console.log("NewW         :", newW);
-      console.log("Adjected W  : ", adjustedW);
 
       this.props.onMove({id: this.props.image.id, dimension: 'w', value: adjustedW});
       setTimeout(()=>{this.setState({throttle: false});}, 1000);
@@ -62,14 +45,10 @@ class ImageOverlay extends Component {
     this.setState({offsetW: event.clientX + /*(this.props.image.w / 2 * 1.6)+*/ (this.props.image.w / 2 * 1.6)});
     this.setState({offsetY: event.clientY + (this.props.image.y / 2 * 1.6)});
 
-    console.log('Starting resize, mouseX: ', event.clientX);
-    console.log('Width                  : ', this.props.image.w / 2 * 1.6);
-    console.log('Offset                 : ', this.state.offsetW);
     event.dataTransfer.dropEffect = "move";
   }
 
   resizeStop = (event) => {
-    console.log('resize stopped');
     this.setState({move: "move"});
   }
 
@@ -105,7 +84,6 @@ class ImageOverlay extends Component {
     this.setState({offsetY: event.clientY + (this.props.image.y / 2 * 1.6)});
 
     event.dataTransfer.dropEffect = "move";
-    console.log("dragStart");
   }
 
    calcBottomFromTop(top, height, container) {

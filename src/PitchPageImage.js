@@ -4,19 +4,6 @@ import './PitchPageImage.css';
 class PitchPageImage extends Component {
   constructor(props) {
     super(props);
-    console.log("Pitch page image props", props);
-    // this.state = {
-    //   id: props.image.id,
-    //   pageId: props.image.pageId,
-    //   pitchId: props.pitchId,
-    //   filename: props.image.filename,
-    //   x: props.image.x,
-    //   y: props.image.y,
-    //   w: props.image.w,
-    //   h: props.image.h
-    // };
-    console.log('CSJM', props);
-    console.log('state', this.state);
 
     this.ratio = this.props.image.w / this.props.image.h;
 
@@ -26,11 +13,17 @@ class PitchPageImage extends Component {
   }
 
   removeImage(event) {
+    const updateURL = 'http://localhost:82/tagportal/pitch/'+this.props.pitch+'/'+this.props.image.pageId+'/image/' + this.props.image.id;
 
+    fetch(updateURL, {
+      method: 'DELETE'
+    }).then(response => {
+      this.props.remove(this);
+    });
   }
 
   updateImage(event) {
-    const updateURL = 'http://localhost:82/tagportal/'+this.props.pitch+'/'+this.props.image.pageId+'/image';
+    const updateURL = 'http://localhost:82/tagportal/pitch/'+this.props.pitch+'/'+this.props.image.pageId+'/image';
     fetch(updateURL, {
       method: 'PUT',
       headers: {
@@ -53,11 +46,11 @@ class PitchPageImage extends Component {
   }
 
   render() {
-    const filename = "http://localhost:82/tagportal/" + this.props.pitch + "/" + this.props.image.pageId + "/files/" + this.props.image.filename;
+    const filename = "http://localhost:82/tagportal/pitch/" + this.props.pitch + "/" + this.props.image.pageId + "/files/" + this.props.image.filename;
     const id = this.props.image.id;
     return (
     <div className="form-row image-editor" data-filename={this.props.image.filename} data-page={this.props.image.pageId} data-image-id={this.props.image.id} data-aspect-ratio={this.props.image.w / this.props.image.h}>
-			<div className="col-md-3"><img className="preview" src={filename} /></div>
+			<div className="col-md-3"><img className="preview" src={filename} alt="thumbnail"/></div>
 			<div className="form-group col-md-1">
 		      <label htmlFor={"imageW"+id } >Width</label>
 		      <input type="text" data-dimension="w" className="image-control form-control aspectControlled" id={"imageW"+id } onChange={this.handleInputChange} value={this.props.image.w }/>

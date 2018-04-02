@@ -20,7 +20,7 @@ class PitchPage extends Component {
       text: props.page.text == null ? '' : props.page.text,
       order: props.page.order,
       images: props.page.images,
-      pdfLink: 'http://localhost:82/tagportal/' + props.pitch + '/preview.pdf'
+      pdfLink: 'http://localhost:82/tagportal/pitch/' + props.pitch + '/preview.pdf'
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -31,29 +31,62 @@ class PitchPage extends Component {
     this.handleFileDrop = this.handleFileDrop.bind(this);
     this.triggerPdfRefresh = this.triggerPdfRefresh.bind(this);
 
+    this.deleteImage = this.deleteImage.bind(this);
+
     this.ajaxUpdate = this.debounce(this.ajaxUpdate, 1000, false);
   }
 
 
 
-  debounce(a,b,c){var d,e;return function(){function h(){d=null,c||(e=a.apply(f,g))}var f=this,g=arguments;return clearTimeout(d),d=setTimeout(h,b),c&&!d&&(e=a.apply(f,g)),e}}
+  debounce(a,b,c){
+    var d,e;
+    return function(){
+      function h(){
+        d=null;
+        c||(e=a.apply(f,g))
+      }
+      var f=this,g=arguments;
+      clearTimeout(d);
+      d=setTimeout(h,b);
+      c&&!d&&(e=a.apply(f,g));
+      return e;
+    }
+  }
+
+  deleteImage(image) {
+    const images = this.state.images;
+
+    const filtered = images.filter(el => el.id !== image.props.image.id);
+
+    this.setState({images: filtered});
+    this.triggerPdfRefresh();
+  }
 
   triggerPdfRefresh() {
-    console.log('triggering pdf refresh for page '+this.state.id);
     this.forceUpdate();
-    this.setState({'pdfLink':'http://localhost:82/tagportal/' + this.state.pitchId + '/preview.pdf?'+Math.random()});
+    this.setState({'pdfLink':'http://localhost:82/tagportal/pitch/' + this.state.pitchId + '/preview.pdf?'+Math.random()});
   }
 
   handleFileDrop(accepted, rejected) {
-    const uploadURL = 'http://localhost:82/tagportal/'+this.state.pitchId+'/'+this.state.id+'/uploadFile';
+    const uploadURL = 'http://localhost:82/tagportal/pitch/'+this.state.pitchId+'/'+this.state.id+'/uploadFile';
     accepted.forEach(file => {
       var data = new FormData();
       data.append('file', file);
       fetch(uploadURL, {
         method: 'POST',
         body: data,
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.id) {
+          const images = this.state.images;
+          images.push(data);
+          this.setState({images:images});
+          this.triggerPdfRefresh();
+        }
       });
-    })
+    });
+
   }
 
   handleImageManualChange(image) {
@@ -83,7 +116,7 @@ class PitchPage extends Component {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
-    const updateURL = 'http://localhost:82/tagportal/' + this.state.pitchId + '/' + this.state.id + '/' + name;
+    const updateURL = 'http://localhost:82/tagportal/pitch/' + this.state.pitchId + '/' + this.state.id + '/' + name;
 
     this.setState({
       [name]: value
@@ -102,7 +135,7 @@ class PitchPage extends Component {
   }
 
   ajaxUpdate(name) {
-    const updateURL = 'http://localhost:82/tagportal/' + this.state.pitchId + '/' + this.state.id + '/' + name;
+    const updateURL = 'http://localhost:82/tagportal/pitch/' + this.state.pitchId + '/' + this.state.id + '/' + name;
     fetch(updateURL, {
       method: 'POST',
       headers: {
@@ -114,10 +147,50 @@ class PitchPage extends Component {
 
 
   render() {
-    console.log('this.props.pitchPageTypes', this.props.pitchPageTypes);
     if (this.state.pitchId < 0 || typeof(this.props.pitchPageTypes) === 'undefined') {
       return (<div></div>)
     }
+
+    const showDetails = this.state.implementation === 'com.tagtheagency.portal.pitch.pages.TextAndImagePage';
+    const bodyText = showDetails ?
+    (
+      <div className="form-group">
+        <label htmlFor={"content" + this.state.id}>Page content</label>
+        <textarea className="form-control pageContent" id={"content" + this.state.id} name="text" rows="10" value={this.state.text} onChange={this.handleInputChange}></textarea>
+      </div>
+    ) : ( null)
+
+    const stateImages = this.state.images;
+    const props = this.props;
+    const handleImageManualChange = this.handleImageManualChange;
+    const triggerPdfRefresh = this.triggerPdfRefresh;
+    const handleFileDrop = this.handleFileDrop;
+    const handleImageDragChange = this.handleImageDragChange;
+    const deleteImage = this.deleteImage;
+
+    const apiKey = {'token': 'Bearer '+localStorage.id_token};
+    const httpHeaders = {'httpHeaders' : apiKey, 'url': this.state.pdfLink};
+
+    console.log(httpHeaders);
+
+    const images = showDetails ?
+    (
+      <div>
+        {stateImages.map(image => (<PitchPageImage key={image.id} pitch={props.pitch} image={image} onChange={handleImageManualChange} triggerPdfRefresh={triggerPdfRefresh} remove={deleteImage}/>))}
+        <Dropzone
+          accept="image/jpeg, image/png"
+          onDrop={handleFileDrop}
+          style={{width: '100%', height: '100px', 'borderWidth': '2px', 'borderColor': 'rgb(102, 102, 102)', 'borderStyle': 'dashed', 'borderRadius': '5px'}}
+        >
+          <p>Drop an image file (*.jpeg, *.png) here to add it to the page.</p>
+        </Dropzone>
+
+        <div className="fileOverlay" onDragOver={(e)=>{e.preventDefault();return false;}} onDrop={(e)=>{e.preventDefault();return false;}}>
+          {stateImages.map(image => (<ImageOverlay key={image.id} pitch={props.pitch} image={image} onMove={handleImageManualChange} onChange={handleImageDragChange}/>))}
+        </div>
+      </div>
+    ) : (null)
+
     return (
 
       <div data-row-id={this.state.id} data-page-order={this.state.order} className="pageTemplate">
@@ -144,14 +217,7 @@ class PitchPage extends Component {
                     <label htmlFor="pageTitle{this.state.id}">Page title</label> <input name="title" type="text" className="form-control pageTitle" id="pageTitle{this.state.id}" placeholder="Enter page title" required="" onChange={this.handleInputChange} value={this.state.title }/>
                     <div className="invalid-feedback">Please provide a valid title for this page.</div>
                   </div>
-                  <div className="form-group">
-                    <label htmlFor={"content" + this.state.id}>Page content</label>
-                    <textarea className="form-control pageContent" id={"content" + this.state.id} name="text" rows="10" value={this.state.text} onChange={this.handleInputChange}></textarea>
-                  </div>
-                  <div className="dropzone">
-                    <div className="files" id="files{this.state.id}" data-page-id="{this.state.id}"></div>
-                      <div className="previewsContainer dropzone-previews" id="previewsContainer{this.state.id}"></div>
-                    </div>
+                  {bodyText}
                   </div>
                 </div>
                 <div className="col-lg-7" style={{position:'relative'}}>
@@ -161,19 +227,10 @@ class PitchPage extends Component {
                     onPageComplete={this.onPageComplete}
                     page={this.state.order + 2}
                     scale={0.8}
+                    documentInitParameters={httpHeaders}
                   />
-                {this.state.images.map(image => (<PitchPageImage key={image.id} pitch={this.props.pitch} image={image} onChange={this.handleImageManualChange} triggerPdfRefresh={this.triggerPdfRefresh}/>))}
-                <Dropzone
-                  accept="image/jpeg, image/png"
-                  onDrop={this.handleFileDrop}
-                  style={{width: '100%', height: '100px', 'borderWidth': '2px', 'borderColor': 'rgb(102, 102, 102)', 'borderStyle': 'dashed', 'borderRadius': '5px'}}
-                >
-                  <p>Drop an image file (*.jpeg, *.png) here to add it to the page.</p>
-                </Dropzone>
 
-                <div className="fileOverlay" onDragOver={(e)=>{e.preventDefault();return false;}} onDrop={(e)=>{e.preventDefault();return false;}}>
-                  {this.state.images.map(image => (<ImageOverlay key={image.id} pitch={this.props.pitch} image={image} onMove={this.handleImageManualChange} onChange={this.handleImageDragChange}/>))}
-                </div>
+                {images}
                 </div>
 
               </div>

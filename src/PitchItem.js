@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PitchPage from './PitchPage.js';
 import { Redirect } from 'react-router-dom';
 import BreadCrumbs from "./components/BreadCrumbs.js";
-
+import Service from "./components/Service.js";
 class PitchItem extends Component {
 
 
@@ -22,7 +22,6 @@ class PitchItem extends Component {
         notFound: false
       };
 
-
     console.log("CSJM pitch item props",props);
 
 //    this.setState({'id': props.match.params.id});
@@ -32,20 +31,13 @@ class PitchItem extends Component {
   }
 
   componentDidMount() {
-    fetch('http://localhost:82/tagportal/'+this.props.match.params.id)
-      .then(response => {
-        console.log(response);
-        if (response.ok) {
-          return response.json();
-        } else {
-          this.setState({notFound: true});
-        }
-      })
-      .then(data =>
-         { if (data) this.setState(data) } );
+    Service.getPitch(this.props.match.params.id)
+    .catch(e => {
+      this.setState({notFound: true});
+    })
+    .then(data => { if (data) this.setState(data) } );
 
-    fetch('http://localhost:82/tagportal/pageTypes')
-    .then(response => response.json())
+    Service.getPageTypes()
     .then(data => this.setState({"pageTypes":data}));
   }
 

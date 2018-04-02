@@ -9,6 +9,13 @@ import Login from './Login.js';
 import Dashboard from './Dashboard.js';
 import Pitch from './Pitch.js';
 import './App.css';
+import AuthService from './components/AuthService';
+import withAuth from './components/withAuth';
+import { withRouter } from 'react-router';
+import Application from './Application.js';
+
+const Auth = new AuthService();
+
 
 class App extends Component {
   render() {
@@ -16,9 +23,7 @@ class App extends Component {
     	<Router>
     		<Switch>
     			<Route path="/login" component={Login} />
-    			<AuthenticatedRoute path="/dashboard" component={Dashboard} />
-					<AuthenticatedRoute path="/pitch" component={Pitch} />
-    			<AuthenticatedRoute component={Dashboard}/>
+					<Route path="/" component={Application} />
     		</Switch>
     	</Router>
     );
