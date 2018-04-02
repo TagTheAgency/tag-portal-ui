@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "jwt-decode": "^2.2.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-dropzone": "^4.2.9",
     "react-google-login": "^3.1.0",
     "react-pdf-js": "^3.0.7",
     "react-router-dom": "^4.2.2",
