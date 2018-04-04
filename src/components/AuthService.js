@@ -23,16 +23,7 @@ export default class AuthService {
       this.setToken(data.jwt) // Setting the token in localStorage
       return Promise.resolve(data);
     });
-    //
-    //
-    //
-    //
-    // const form = new FormData();
-    // form.append("token", token);
-    // return fetch('http://localhost:82/tagportal/security/', {
-    //   method: "POST",
-    //   body: form
-    // }).then(response => response.json());
+
   }
 
   loggedIn() {
@@ -78,12 +69,12 @@ export default class AuthService {
   }
 
 
-  fetch(url, options) {
+  fetch(url, options, applyJson = true, returnJson = true) {
     // performs api calls sending the required authentication headers
-    const headers = {
+    const headers = applyJson ? {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
-    }
+    } : {};
 
     // Setting Authorization header
     // token: Bearer xxxxxxx.xxxxxxxx.xxxxxx
@@ -96,7 +87,7 @@ export default class AuthService {
       ...options
     })
     .then(this._checkStatus)
-    .then(response => response.json())
+    .then(response => {return returnJson ? response.json() : response});
   }
 
   _checkStatus(response) {

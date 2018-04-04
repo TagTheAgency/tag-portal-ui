@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './PitchPageImage.css';
+import Service from './components/Service.js';
 
 class PitchPageImage extends Component {
   constructor(props) {
@@ -10,27 +11,30 @@ class PitchPageImage extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.removeImage = this.removeImage.bind(this);
     this.updateImage = this.updateImage.bind(this);
+
+    this.state = {};
+  }
+
+  componentDidMount() {
+    Service.renderImage(this.props.pitch, this.props.image.pageId, this.props.image.filename).
+    then(text => {
+      console.log("Render image response",text);
+      const base64file = text;
+      console.log(base64file);
+      this.setState({filedata: base64file});
+    })
   }
 
   removeImage(event) {
-    const updateURL = 'http://localhost:82/tagportal/pitch/'+this.props.pitch+'/'+this.props.image.pageId+'/image/' + this.props.image.id;
-
-    fetch(updateURL, {
-      method: 'DELETE'
-    }).then(response => {
+    Service.removeImage(this.props.pitch, this.props.image.pageId, this.props.image.id)
+    .then(response => {
       this.props.remove(this);
     });
   }
 
   updateImage(event) {
-    const updateURL = 'http://localhost:82/tagportal/pitch/'+this.props.pitch+'/'+this.props.image.pageId+'/image';
-    fetch(updateURL, {
-      method: 'PUT',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify(this.props.image)
-    }).then(this.props.triggerPdfRefresh);
+    Service.updateImage(this.props.pitch, this.props.image.pageId, this.props.image)
+    .then(this.props.triggerPdfRefresh);
   }
 
   handleInputChange(event) {
@@ -46,11 +50,11 @@ class PitchPageImage extends Component {
   }
 
   render() {
-    const filename = "http://localhost:82/tagportal/pitch/" + this.props.pitch + "/" + this.props.image.pageId + "/files/" + this.props.image.filename;
+//    const filename = "http://localhost:82/tagportal/pitch/" + this.props.pitch + "/" + this.props.image.pageId + "/files/" + this.props.image.filename;
     const id = this.props.image.id;
     return (
     <div className="form-row image-editor" data-filename={this.props.image.filename} data-page={this.props.image.pageId} data-image-id={this.props.image.id} data-aspect-ratio={this.props.image.w / this.props.image.h}>
-			<div className="col-md-3"><img className="preview" src={filename} alt="thumbnail"/></div>
+			<div className="col-md-3"><img className="preview" src={this.state.filedata} alt="thumbnail"/></div>
 			<div className="form-group col-md-1">
 		      <label htmlFor={"imageW"+id } >Width</label>
 		      <input type="text" data-dimension="w" className="image-control form-control aspectControlled" id={"imageW"+id } onChange={this.handleInputChange} value={this.props.image.w }/>

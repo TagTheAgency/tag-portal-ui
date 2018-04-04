@@ -3,6 +3,7 @@ import Dropzone from 'react-dropzone';
 import PDF from 'react-pdf-js';
 import PitchPageImage from './PitchPageImage.js';
 import ImageOverlay from './ImageOverlay.js';
+import Service from './components/Service.js';
 import './PitchPage.css';
 
 // const PageTypes = [
@@ -68,15 +69,8 @@ class PitchPage extends Component {
   }
 
   handleFileDrop(accepted, rejected) {
-    const uploadURL = 'http://localhost:82/tagportal/pitch/'+this.state.pitchId+'/'+this.state.id+'/uploadFile';
     accepted.forEach(file => {
-      var data = new FormData();
-      data.append('file', file);
-      fetch(uploadURL, {
-        method: 'POST',
-        body: data,
-      })
-      .then(response => response.json())
+      Service.uploadFile(this.state.pitchId, this.state.id, file)
       .then(data => {
         if (data.id) {
           const images = this.state.images;
@@ -116,33 +110,16 @@ class PitchPage extends Component {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
-    const updateURL = 'http://localhost:82/tagportal/pitch/' + this.state.pitchId + '/' + this.state.id + '/' + name;
-
     this.setState({
       [name]: value
     });
 
     this.ajaxUpdate(name);
-//    this.debounce(this.test, 1000, false)();
-    // fetch(updateURL, {
-    //   method: 'POST',
-    //   headers: {
-    //     'content-type': 'application/json'
-    //   },
-    //   body: JSON.stringify(this.state)
-    // }).then(this.props.triggerPdfRefresh);
-
   }
 
   ajaxUpdate(name) {
-    const updateURL = 'http://localhost:82/tagportal/pitch/' + this.state.pitchId + '/' + this.state.id + '/' + name;
-    fetch(updateURL, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify(this.state)
-    }).then(this.triggerPdfRefresh);
+    Service.updatePage(this.state.pitchId, this.state.id, name, this.state)
+    .then(this.triggerPdfRefresh);
   }
 
 
@@ -170,8 +147,6 @@ class PitchPage extends Component {
 
     const apiKey = {'token': 'Bearer '+localStorage.id_token};
     const httpHeaders = {'httpHeaders' : apiKey, 'url': this.state.pdfLink};
-
-    console.log(httpHeaders);
 
     const images = showDetails ?
     (
@@ -222,7 +197,6 @@ class PitchPage extends Component {
                 </div>
                 <div className="col-lg-7" style={{position:'relative'}}>
                   <PDF
-                    file={this.state.pdfLink}
                     onDocumentComplete={this.onDocumentComplete}
                     onPageComplete={this.onPageComplete}
                     page={this.state.order + 2}
