@@ -37,7 +37,7 @@ import 'react-table/react-table.css'
       Header: 'Download',
       accessor: 'id',
       maxWidth: 40,
-      Cell: props => <a target="_blank" onClick={() => downloadPdf(props.row.id, props.row.title)} title="Download PDF"><i className="fa fa-file-pdf-o" aria-hidden="true"></i><span className="sr-only">Download PDF</span></a>
+      Cell: props => <a style={{cursor:"pointer"}} target="_blank" onClick={() => downloadPdf(props.row.id, props.row.title)} title="Download PDF"><i className="fa fa-file-pdf-o" aria-hidden="true"></i><span className="sr-only">Download PDF</span></a>
     }]
   }];
 
@@ -49,13 +49,17 @@ class Pitch extends Component {
     this.state = {}
 
     this.createPitch = this.createPitch.bind(this);
-
   }
 
   createPitch() {
-    fetch('http://localhost:82/tagportal/create')
-      .then(response => response.json())
-      .then(data => this.setState({"pitches":data}));
+    Service.createPitch()
+    .then(data => {
+      const pitches = this.state.pitches;
+      pitches.push(data);
+      this.setState({"pitches":pitches});
+      this.props.history.replace('/pitch/'+data.id);
+
+    });
   }
 
   componentDidMount() {
@@ -69,15 +73,15 @@ class Pitch extends Component {
       <div className="App">
         <Navigation/>
         <div className="content-wrapper">
-        <Route path={`${this.props.match.url}/`} exact render={(props)=><PitchList {...props} pitches={this.state.pitches}/>} />
-        <Route path={`${this.props.match.url}/:id`} component={PitchItem} />
+        <Route path={`${this.props.match.url}/`} exact render={(props)=><PitchList {...props}  createPitch={this.createPitch} pitches={this.state.pitches}/>} />
+        <Route path={`${this.props.match.url}/:id`} component={PitchItem}/>
         </div>
       </div>
     );
   }
 }
 
-const PitchList = ({ match, pitches }) => (
+const PitchList = ({ match, pitches, createPitch }) => (
   <div>
     <BreadCrumbs elements={[{"link":"pitch", "name":"Pitches"}]} />
       <div className="container-fluid">
@@ -86,7 +90,7 @@ const PitchList = ({ match, pitches }) => (
         <div className="col-12">
           <h1>Pitch Tool</h1>
           <p>Here you can see and modify existing pitches, or create new ones.</p>
-          <button className="btn btn-primary" onClick={this.createPitch}>Create new pitch</button>
+          <button className="btn btn-primary" onClick={createPitch}>Create new pitch</button>
         </div>
       </div>
       <ReactTable

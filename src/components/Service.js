@@ -14,6 +14,12 @@ const Service = {
     return Auth.fetch(apiBase+id);
   },
 
+  createPitch: (id) => {
+    return Auth.fetch(apiBase+'create',{
+      method: 'POST'
+    });
+  },
+
   getPageTypes: () => {
     return Auth.fetch(apiBase + 'pageTypes');
   },
