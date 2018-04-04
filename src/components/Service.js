@@ -60,6 +60,26 @@ const Service = {
 
   },
 
+  downloadPdf: (pitch, title) => {
+    const url = apiBase + pitch + '/'+title+'.pdf';
+    Auth.fetch(url, {}, false, false)
+    .then(response => response.blob())
+    .then(blob => {
+      var objectURL = URL.createObjectURL(blob);  //new Blob([blob], {type: "application/pdf"})
+      var a = document.createElement('a');
+      a.style = "display: none";
+      a.href = objectURL;
+      a.download = title+'.pdf';
+      a.click();
+      setTimeout(function(){
+        a = null;
+        window.URL.revokeObjectURL(objectURL);
+      }, 100);
+
+    })
+  },
+
+
   catchErrors: (error) => {
     console.warn(error);
     sessionStorage.clear();

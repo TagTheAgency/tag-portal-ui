@@ -9,6 +9,11 @@ import 'react-table/react-table.css'
 
   const pitchRoot = `${process.env.PUBLIC_URL}/pitch`;
 
+  const downloadPdf = (id, title) => {
+    console.log(id, title);
+    Service.downloadPdf(id, title)
+  }
+
   const columns = [{
     Header: 'Title',
     accessor: 'title', // String-based value accessors!
@@ -32,7 +37,7 @@ import 'react-table/react-table.css'
       Header: 'Download',
       accessor: 'id',
       maxWidth: 40,
-      Cell: props => <a target="_blank" href={'http://localhost:82/' + props.row.id + '/' + props.row.title + '.pdf'} title="Download PDF"><i className="fa fa-file-pdf-o" aria-hidden="true"></i><span className="sr-only">Download PDF</span></a>
+      Cell: props => <a target="_blank" onClick={() => downloadPdf(props.row.id, props.row.title)} title="Download PDF"><i className="fa fa-file-pdf-o" aria-hidden="true"></i><span className="sr-only">Download PDF</span></a>
     }]
   }];
 

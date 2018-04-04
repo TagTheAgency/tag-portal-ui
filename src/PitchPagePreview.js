@@ -16,8 +16,6 @@ class PitchPage extends Component {
       text: props.page.text == null ? '' : props.page.text,
       order: props.page.order
     };
-    console.log('CSJM', props);
-    console.log('state', this.state);
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 

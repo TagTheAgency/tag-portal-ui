@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import GoogleLogin from 'react-google-login';
 //import Authentication from './components/Authentication.js';
-import decode from 'jwt-decode';
 import AuthService from './components/AuthService';
 
 class Login extends Component {
@@ -35,21 +34,6 @@ class Login extends Component {
             alert(err);
         })
 			}
-//
-// 			Authentication.exchangeToken(response.tokenId)
-// 			.then(data => {
-// 				if (data.jwt) {
-// 					sessionStorage.setItem("jwt", data.jwt);
-// 					this.setState({'jwt': data.jwt});
-// //					this.setState({'error': undefined});
-// 				}
-// 				if (data.error) {
-// 					this.setState({'error': data.error});
-// 					this.setState({'jwt': undefined});
-// 				}
-// 				console.log(data);
-// 			})
-// 		}
 	};
 
 	render() {

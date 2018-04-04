@@ -16,8 +16,8 @@ class PitchPageImage extends Component {
   }
 
   componentDidMount() {
-    Service.renderImage(this.props.pitch, this.props.image.pageId, this.props.image.filename).
-    then(text => {
+    Service.renderImage(this.props.pitch, this.props.image.pageId, this.props.image.filename)
+    .then(text => {
       console.log("Render image response",text);
       const base64file = text;
       console.log(base64file);

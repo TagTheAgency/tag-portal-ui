@@ -23,7 +23,7 @@ class ImageOverlay extends Component {
     event.stopPropagation();
 
     const newW = (event.clientX - this.state.offsetW);// - (this.props.image.x / 2 * 1.6));
-    const newH = (this.state.offsetY - event.clientY);
+//    const newH = (this.state.offsetY - event.clientY);
 
     if (!this.state.throttle) {
       this.setState({throttle: true});

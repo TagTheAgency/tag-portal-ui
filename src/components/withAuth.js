@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
 import AuthService from './AuthService';
 
-import { withRouter } from 'react-router';
-
 export default function withAuth(AuthComponent) {
   const Auth = new AuthService('http://localhost:82/tagportal/security/');
-
-  const AuthComponentWithRouter = withRouter(AuthComponent);
 
   return class AuthWrapped extends Component {
     constructor() {
