@@ -20,9 +20,10 @@ class PitchPage extends Component {
       implementation: props.page.implementation,
       text: props.page.text == null ? '' : props.page.text,
       order: props.page.order,
-      images: props.page.images,
+      images: props.page.images == null ? [] : props.page.images,
       pdfLink: 'http://localhost:82/tagportal/pitch/' + props.pitch + '/preview.pdf'
     };
+
 
     this.handleInputChange = this.handleInputChange.bind(this);
 

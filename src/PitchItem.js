@@ -22,12 +22,25 @@ class PitchItem extends Component {
         notFound: false
       };
 
-    console.log("CSJM pitch item props",props);
-
-//    this.setState({'id': props.match.params.id});
-
     this.handleInputChange = this.handleInputChange.bind(this);
     this.addPage = this.addPage.bind(this);
+
+    this.ajaxUpdate = this.debounce(this.ajaxUpdate, 1000, false);
+  }
+
+  debounce(a,b,c){
+    var d,e;
+    return function(){
+      function h(){
+        d=null;
+        c||(e=a.apply(f,g))
+      }
+      var f=this,g=arguments;
+      clearTimeout(d);
+      d=setTimeout(h,b);
+      c&&!d&&(e=a.apply(f,g));
+      return e;
+    }
   }
 
   componentDidMount() {
@@ -49,13 +62,25 @@ class PitchItem extends Component {
     this.setState({
       [name]: value
     });
+
+    this.ajaxUpdate(name);
+  }
+
+  ajaxUpdate(name) {
+    console.log(this.state.id)
+    Service.updatePitch(this.state.id, this.state)
+//    .then(this.triggerPdfRefresh);
   }
 
   addPage(event) {
-    console.log(this);
-    this.setState(prevState => ({
-      pages: [...prevState.pages, {id:3}]
-    }));
+    Service.addPage(this.state.id)
+    .then(response => {
+      console.log(this);
+      this.setState(prevState => ({
+        pages: [...prevState.pages, response]
+      }));
+    })
+
   }
 
   render() {
@@ -69,6 +94,7 @@ class PitchItem extends Component {
         <BreadCrumbs elements={[{"link":pitchRoot, "name":"Pitches"},{"link":pitchRoot+'/'+this.state.id, "name":this.state.title}]} />
         <div>
           <div className="container-fluid">
+            <button className="btn btn-primary" onClick={this.addPage}>Add page</button>
 
             <div className="form-group">
               <label htmlFor="pitchName">Pitch title (or client name)</label>
@@ -83,7 +109,7 @@ class PitchItem extends Component {
                 {this.state.pages.map(page => <PitchPage key={page.id} page={page} pitch={this.state.id} pitchPageTypes={this.state.pageTypes}/>)}
              </div>
            </div>
-           <button onClick={this.addPage}>Add Page</button>
+           <button className="btn btn-primary" onClick={this.addPage}>Add Page</button>
          </div>
       </div>
     </div>

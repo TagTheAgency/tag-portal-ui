@@ -20,6 +20,19 @@ const Service = {
     });
   },
 
+  updatePitch: (id, state) => {
+    return Auth.fetch(apiBase+id, {
+      method: 'POST',
+      body: JSON.stringify({'title':state.title})
+    });
+  },
+
+  addPage: (id) => {
+    return Auth.fetch(apiBase + id + '/create', {
+      method: 'POST'
+    });
+  },
+
   getPageTypes: () => {
     return Auth.fetch(apiBase + 'pageTypes');
   },
