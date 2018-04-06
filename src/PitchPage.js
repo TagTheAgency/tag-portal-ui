@@ -21,7 +21,8 @@ class PitchPage extends Component {
       text: props.page.text == null ? '' : props.page.text,
       order: props.page.order,
       images: props.page.images == null ? [] : props.page.images,
-      pdfLink: 'http://localhost:82/tagportal/pitch/' + props.pitch + '/preview.pdf'
+      pdfLink: 'http://localhost:82/tagportal/pitch/' + props.pitch + '/preview.pdf',
+      showHide: true
     };
 
 
@@ -36,9 +37,14 @@ class PitchPage extends Component {
     this.deleteImage = this.deleteImage.bind(this);
 
     this.ajaxUpdate = this.debounce(this.ajaxUpdate, 1000, false);
+
+    this.showHide = this.showHide.bind(this);
   }
 
-
+  showHide() {
+    console.log("Setting show hide", this.state.showHide);
+    this.setState({showHide: !this.state.showHide})
+  }
 
   debounce(a,b,c){
     var d,e;
@@ -174,11 +180,11 @@ class PitchPage extends Component {
 					<div className="card-header" role="tab" id="templateHeading{this.state.id}">
 						<h5 className="mb-0">
 							<i className="fa fa-arrows" aria-hidden="true"></i>
-							<a data-toggle="collapse" href="#collapse{this.state.id}" aria-expanded="true" aria-controls="collapse{this.state.id}"  className=""><i className="fa fa-expand" aria-hidden="true" style={{float:'right'}}></i><span id="headingLink{this.state.id}">{this.state.title }</span> </a>
+							<a data-toggle="collapse" onClick={this.showHide} aria-expanded="true" aria-controls="collapse{this.state.id}"  className=""><i className="fa fa-expand" aria-hidden="true" style={{float:'right'}}></i><span id="headingLink{this.state.id}">{this.state.title }</span> </a>
 						</h5>
 					</div>
 
-          <div id="collapse{this.state.id}" className="collapse show" role="tabpanel" aria-labelledby="templateHeading{this.state.id}" data-parent="#accordion">
+          <div id="collapse{this.state.id}" className={"collapse " + (this.state.showHide ? "show" : "hide")} role="tabpanel" aria-labelledby="templateHeading{this.state.id}" data-parent="#accordion">
             <div className="row">
               <div className="col-lg-5">
                 <div className="card-body" id="originCard{this.state.id}">
