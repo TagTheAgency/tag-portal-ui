@@ -2,7 +2,7 @@ import decode from 'jwt-decode';
 export default class AuthService {
   // Initializing important variables
   constructor(domain) {
-    this.domain = domain || 'http://localhost:82'
+    this.domain = domain || process.env.REACT_APP_API_ENDPOINT;
     this.fetch = this.fetch.bind(this)
     this.login = this.login.bind(this)
     this.getProfile = this.getProfile.bind(this)
@@ -13,7 +13,7 @@ export default class AuthService {
     form.append("token", token);
 
     console.log(fetch, this.fetch);
-    return fetch(`${this.domain}/tagportal/security/`, {
+    return fetch(`${this.domain}/security/`, {
       method: 'POST',
       body: form
     })

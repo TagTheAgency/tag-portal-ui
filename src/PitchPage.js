@@ -21,7 +21,7 @@ class PitchPage extends Component {
       text: props.page.text == null ? '' : props.page.text,
       order: props.page.order,
       images: props.page.images == null ? [] : props.page.images,
-      pdfLink: 'http://localhost:82/tagportal/pitch/' + props.pitch + '/preview.pdf',
+      pdfLink: process.env.REACT_APP_API_ENDPOINT + '/pitch/' + props.pitch + '/preview.pdf',
       showHide: true
     };
 
@@ -72,7 +72,7 @@ class PitchPage extends Component {
 
   triggerPdfRefresh() {
     this.forceUpdate();
-    this.setState({'pdfLink':'http://localhost:82/tagportal/pitch/' + this.state.pitchId + '/preview.pdf?'+Math.random()});
+    this.setState({'pdfLink':process.env.REACT_APP_API_ENDPOINT + '/pitch/' + this.state.pitchId + '/preview.pdf?'+Math.random()});
   }
 
   handleFileDrop(accepted, rejected) {

@@ -1,6 +1,6 @@
 import { withRouter } from "react-router-dom";
 import AuthService from "./AuthService.js";
-const apiBase = 'http://localhost:82/tagportal/pitch/';
+const apiBase = process.env.REACT_APP_API_ENDPOINT + '/pitch/';
 
 const Auth = new AuthService();
 

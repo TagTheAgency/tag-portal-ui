@@ -2,7 +2,7 @@ const Authentication = {
 	exchangeToken: (token) => {
 		const form = new FormData();
 		form.append("token", token);
-    return fetch('http://localhost:82/tagportal/security/', {
+    return fetch(process.env.REACT_APP_API_ENDPOINT + '/security/', {
       method: "POST",
       body: form
     }).then(response => response.json());

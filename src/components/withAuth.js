@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import AuthService from './AuthService';
 
 export default function withAuth(AuthComponent) {
-  const Auth = new AuthService('http://localhost:82/tagportal/security/');
+  const Auth = new AuthService(process.env.REACT_APP_API_ENDPOINT + '/security/');
 
   return class AuthWrapped extends Component {
     constructor() {
