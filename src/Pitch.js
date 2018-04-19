@@ -70,13 +70,11 @@ class Pitch extends Component {
 
   render() {
     return (
-      <div className="App">
-        <Navigation/>
+
         <div className="content-wrapper">
         <Route path={`${this.props.match.url}/`} exact render={(props)=><PitchList {...props}  createPitch={this.createPitch} pitches={this.state.pitches}/>} />
         <Route path={`${this.props.match.url}/:id`} component={PitchItem}/>
         </div>
-      </div>
     );
   }
 }

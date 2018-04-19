@@ -1,44 +1,51 @@
 import { withRouter } from "react-router-dom";
 import AuthService from "./AuthService.js";
-const apiBase = process.env.REACT_APP_API_ENDPOINT + '/pitch/';
+
+const apiBase = process.env.REACT_APP_API_ENDPOINT;
+const pitchApiBase = apiBase + '/pitch/';
+const briefApiBase = apiBase + '/briefs/';
 
 const Auth = new AuthService();
 
 const Service = {
 
+  getClients: () => {
+    return Auth.fetch(briefApiBase + 'clients');
+  },
+
   getPitches: () => {
-    return Auth.fetch(apiBase);
+    return Auth.fetch(pitchApiBase);
   },
 
   getPitch: (id) => {
-    return Auth.fetch(apiBase+id);
+    return Auth.fetch(pitchApiBase+id);
   },
 
   createPitch: (id) => {
-    return Auth.fetch(apiBase+'create',{
+    return Auth.fetch(pitchApiBase+'create',{
       method: 'POST'
     });
   },
 
   updatePitch: (id, state) => {
-    return Auth.fetch(apiBase+id, {
+    return Auth.fetch(pitchApiBase+id, {
       method: 'POST',
       body: JSON.stringify({'title':state.title})
     });
   },
 
   addPage: (id) => {
-    return Auth.fetch(apiBase + id + '/create', {
+    return Auth.fetch(pitchApiBase + id + '/create', {
       method: 'POST'
     });
   },
 
   getPageTypes: () => {
-    return Auth.fetch(apiBase + 'pageTypes');
+    return Auth.fetch(pitchApiBase + 'pageTypes');
   },
 
   uploadFile: (pitch, page, file) => {
-    const uploadURL = apiBase+pitch+'/'+page+'/uploadFile';
+    const uploadURL = pitchApiBase+pitch+'/'+page+'/uploadFile';
     var data = new FormData();
     data.append('file', file);
     return Auth.fetch(uploadURL, {
@@ -48,7 +55,7 @@ const Service = {
   },
 
   updatePage: (pitch, page, name, data) => {
-    const updateURL = apiBase + pitch + '/' + page + '/' + name;
+    const updateURL = pitchApiBase + pitch + '/' + page + '/' + name;
     return Auth.fetch(updateURL, {
       method: 'POST',
       body: JSON.stringify(data)
@@ -56,7 +63,7 @@ const Service = {
   },
 
   removeImage: (pitch, page, image) => {
-    const updateURL = apiBase+pitch+'/'+page+'/image/' + image;
+    const updateURL = pitchApiBase+pitch+'/'+page+'/image/' + image;
 
     return Auth.fetch(updateURL, {
       method: 'DELETE'
@@ -64,7 +71,7 @@ const Service = {
   },
 
   updateImage: (pitch, page, image) => {
-    const updateURL = apiBase+pitch+'/'+page+'/image';
+    const updateURL = pitchApiBase+pitch+'/'+page+'/image';
     return Auth.fetch(updateURL, {
       method: 'PUT',
       body: JSON.stringify(image)
@@ -72,7 +79,7 @@ const Service = {
   },
 
   renderImage: (pitch, page, filename) => {
-    const url = apiBase +pitch + "/" + page + "/files64/" + filename;
+    const url = pitchApiBase +pitch + "/" + page + "/files64/" + filename;
     return Auth.fetch(url, {}, false, false)
     .catch(e => {console.log("Caught e",e); return {text: () => ""}})
     .then(response => {return response.text()});
@@ -80,7 +87,7 @@ const Service = {
   },
 
   downloadPdf: (pitch, title) => {
-    const url = apiBase + pitch + '/'+title+'.pdf';
+    const url = pitchApiBase + pitch + '/'+title+'.pdf';
     Auth.fetch(url, {}, false, false)
     .then(response => response.blob())
     .then(blob => {

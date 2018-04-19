@@ -241,17 +241,17 @@ body.fixed-nav {
   color: rgba(0, 0, 0, 0.5);
 }
 
-body.sidenav-toggled #mainNav.fixed-top .sidenav-toggler {
+.sidenav-toggled #mainNav.fixed-top .sidenav-toggler {
   overflow-x: hidden;
   width: 55px;
 }
 
-body.sidenav-toggled #mainNav.fixed-top .sidenav-toggler .nav-item,
-body.sidenav-toggled #mainNav.fixed-top .sidenav-toggler .nav-link {
+.sidenav-toggled #mainNav.fixed-top .sidenav-toggler .nav-item,
+.sidenav-toggled #mainNav.fixed-top .sidenav-toggler .nav-link {
   width: 55px !important;
 }
 
-body.sidenav-toggled #mainNav.fixed-top #sidenavToggler i {
+.sidenav-toggled #mainNav.fixed-top #sidenavToggler i {
   -webkit-transform: scaleX(-1);
   -moz-transform: scaleX(-1);
   -o-transform: scaleX(-1);
