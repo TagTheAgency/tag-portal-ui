@@ -12,6 +12,7 @@ class Briefs extends Component {
 
     this.createBrief = this.createBrief.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.selectProject = this.selectProject.bind(this);
   }
 
   createBrief() {
@@ -20,6 +21,15 @@ class Briefs extends Component {
 
   handleChange(selectedOption) {
     this.setState({ selectedOption });
+    this.setState({"projects":[]});
+    if (selectedOption != null) {
+      Service.getProjects(selectedOption.id).then(data => this.setState({"projects":data}));
+    }
+
+  }
+
+  selectProject(project) {
+
   }
 
   componentDidMount() {
@@ -30,7 +40,14 @@ class Briefs extends Component {
 
   render() {
 
-    const { selectedOption } = this.state;
+    const { selectedOption, selectedProject } = this.state;
+
+    const projects = this.state.projects != null && this.state.projects.length > 0 ? (
+      <div className="list-group">
+        {this.state.projects.map(el => <button key={el.code} type="button" className="list-group-item list-group-item-action" onClick={this.selectProject}>{el.name}</button>)}
+      </div>
+
+    ) : null;
 
     return (
         <div className="content-wrapper">
@@ -49,6 +66,11 @@ class Briefs extends Component {
               </div>
               <div className="col-sm-4">
               <p>Or <button className="btn btn-primary">Create new client</button></p>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-sm-4">
+              {projects}
               </div>
             </div>
           </div>

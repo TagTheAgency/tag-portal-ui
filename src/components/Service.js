@@ -13,6 +13,10 @@ const Service = {
     return Auth.fetch(briefApiBase + 'clients');
   },
 
+  getProjects: (client) => {
+    return Auth.fetch(briefApiBase + 'projects/' + client);
+  },
+
   getPitches: () => {
     return Auth.fetch(pitchApiBase);
   },
