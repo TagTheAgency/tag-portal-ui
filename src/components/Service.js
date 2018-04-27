@@ -2,6 +2,7 @@ import { withRouter } from "react-router-dom";
 import AuthService from "./AuthService.js";
 
 const apiBase = process.env.REACT_APP_API_ENDPOINT;
+const catchApiBase = 'http://localhost:8080/admin/api/';
 const pitchApiBase = apiBase + '/pitch/';
 const briefApiBase = apiBase + '/briefs/';
 
@@ -109,6 +110,15 @@ const Service = {
     })
   },
 
+  getFacebookApps: () => {
+    const url = catchApiBase + 'applications';
+    return Auth.fetch(url);
+  },
+
+  getFacebookApplication: (id) => {
+    const url = catchApiBase + 'application/'+id;
+    return Auth.fetch(url);
+  },
 
   catchErrors: (error) => {
     console.warn(error);
