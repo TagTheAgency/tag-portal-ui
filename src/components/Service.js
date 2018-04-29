@@ -120,6 +120,11 @@ const Service = {
     return Auth.fetch(url);
   },
 
+  getFacebookTemplate: (id) => {
+    const url = catchApiBase + 'template/1';// FIXME +id;
+    return Auth.fetch(url);
+  },
+
   catchErrors: (error) => {
     console.warn(error);
     sessionStorage.clear();

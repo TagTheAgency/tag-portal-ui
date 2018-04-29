@@ -20,7 +20,8 @@ class FacebookApplication extends Component {
         uri: '',
         name: '',
         notFound: false,
-        render: 'desktop'
+        render: 'desktop',
+        template: null
       };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -28,6 +29,7 @@ class FacebookApplication extends Component {
     this.iframeStyle = this.iframeStyle.bind(this);
     this.viewDesktop = this.viewDesktop.bind(this);
     this.viewMobile = this.viewMobile.bind(this);
+    this.constructSchema = this.constructSchema.bind(this);
   }
 
   debounce(a,b,c){
@@ -50,7 +52,12 @@ class FacebookApplication extends Component {
     .catch(e => {
       this.setState({notFound: true});
     })
-    .then(data => { if (data) this.setState(data) } );
+    .then(data => {
+      if (data) {
+        this.setState(data)
+        Service.getFacebookTemplate(this.state.template).then(data => this.setState({template:data}));
+    }} );
+
   }
 
   handleInputChange(event) {
@@ -87,16 +94,27 @@ class FacebookApplication extends Component {
     }
   }
 
+  constructSchema() {
+    return(
+      <div>
+        {this.state.template.fields.map((field,idx) => <Field key={idx} field={field} />)}
+      </div>
+    )
+  }
 
   render() {
+
+    const schema = this.state.template == null ? (<p>Loading template schema</p>)
+      : this.constructSchema();
       return (
       <div className="row">
       <div className="col-lg-5">
         <button onClick={this.viewDesktop}>Desktop</button>
         <button onClick={this.viewMobile}>Mobile</button>
-
+        {schema}
       </div>
       <div className="col-lg-7">
+        <div><i onClick={this.viewDesktop} className="fa fa-desktop fa-2x" aria-hidden="true" style={{cursor:"pointer"}}></i> <i style={{cursor:"pointer"}} className="fa fa-mobile fa-2x" aria-hidden="true" onClick={this.viewMobile}></i> </div>
         <div className="resizer">
           <iframe src={"http://localhost:8080/app/"+this.state.uri+"/page"} style={this.iframeStyle()}/>
         </div>
@@ -107,6 +125,22 @@ class FacebookApplication extends Component {
     }
 
 
+}
+
+const Field = ({field}) => {
+  if (field.type == 'Text') {
+    return (
+      <div className="form-group">
+        <label>{field.label}</label> <input name={field.name} type="text" className="form-control" onChange={this.handleInputChange} value="FIXME"/>
+      </div>
+    );
+  } else if (field.type == 'Image') {
+    return (
+    <div className="form-group">
+      <label>{field.label}</label> <input name={field.name} type="file" className="form-control" value=""/>
+    </div>
+    )
+  }
 }
 
 

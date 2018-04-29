@@ -7,6 +7,20 @@ const Auth = new AuthService();
 
 class Navigation extends React.Component {
 
+	constructor(props) {
+		super(props);
+		this.state = {
+			expanded: true
+		}
+
+		this.toggleSideNav = this.toggleSideNav.bind(this);
+	}
+
+	toggleSideNav() {
+		const expanded = this.state.expanded;
+		this.setState({expanded:!expanded});
+	}
+
 	render() {
 		return (
 			<nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
@@ -114,7 +128,7 @@ class Navigation extends React.Component {
 			      </ul>
 			      <ul className="navbar-nav sidenav-toggler">
 			        <li className="nav-item">
-			          <a className="nav-link text-center" id="sidenavToggler">
+			          <a className="nav-link text-center" id="sidenavToggler" onClick={this.toggleSideNav}>
 			            <i className="fa fa-fw fa-angle-left"></i>
 			          </a>
 			        </li>
