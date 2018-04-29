@@ -125,6 +125,14 @@ const Service = {
     return Auth.fetch(url);
   },
 
+  updateCatchSchemaValues: (id, schemaValues) => {
+    const url = catchApiBase + 'application/' +id+'/schema';
+    return Auth.fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify(schemaValues)
+    });
+  },
+
   catchErrors: (error) => {
     console.warn(error);
     sessionStorage.clear();

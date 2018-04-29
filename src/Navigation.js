@@ -48,10 +48,10 @@ class Navigation extends React.Component {
 			            <span className="nav-link-text">Briefs</span>
 			          </a>
 			        </li>
-			        <li className="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
-			          <a className="nav-link" href="tables.html">
-			            <i className="fa fa-fw fa-table"></i>
-			            <span className="nav-link-text">Tables</span>
+			        <li className="nav-item" data-toggle="tooltip" data-placement="right" title="Catch">
+			          <a className="nav-link" href={process.env.PUBLIC_URL + '/catch'}>
+			            <i className="fa fa-fw fa-facebook"></i>
+			            <span className="nav-link-text">Catch</span>
 			          </a>
 			        </li>
 			        <li className="nav-item" data-toggle="tooltip" data-placement="right" title="Components">

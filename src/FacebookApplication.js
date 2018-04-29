@@ -30,6 +30,7 @@ class FacebookApplication extends Component {
     this.viewDesktop = this.viewDesktop.bind(this);
     this.viewMobile = this.viewMobile.bind(this);
     this.constructSchema = this.constructSchema.bind(this);
+    this.triggerIframeRefresh = this.triggerIframeRefresh.bind(this);
   }
 
   debounce(a,b,c){
@@ -62,14 +63,18 @@ class FacebookApplication extends Component {
 
   handleInputChange(event) {
     const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const value = target.type === 'file' ? target.files[0] : target.value;
     const name = target.name;
 
+    const schemaValues = this.state.schemaValues;
+    schemaValues[name] = value;
     this.setState({
-      [name]: value
+      schemaValues: schemaValues
     });
 
     this.ajaxUpdate(name);
+
+    console.log(this.state);
   }
 
   viewDesktop() {
@@ -82,8 +87,13 @@ class FacebookApplication extends Component {
 
   ajaxUpdate(name) {
     console.log(this.state.id)
-//    Service.updatePitch(this.state.id, this.state)
-  //    .then(this.triggerPdfRefresh);
+    Service.updateCatchSchemaValues(this.state.id, this.state.schemaValues)
+    .then(this.triggerIframeRefresh);
+  }
+
+  triggerIframeRefresh() {
+    this.setState({uri:this.state.uri});
+    //TODO make iframe refresh.  this.iframe.contentWindow.location.reload(true);
   }
 
   iframeStyle() {
@@ -97,7 +107,7 @@ class FacebookApplication extends Component {
   constructSchema() {
     return(
       <div>
-        {this.state.template.fields.map((field,idx) => <Field key={idx} field={field} />)}
+        {this.state.template.fields.map((field,idx) => <Field key={idx} field={field} app={this}/>)}
       </div>
     )
   }
@@ -109,14 +119,12 @@ class FacebookApplication extends Component {
       return (
       <div className="row">
       <div className="col-lg-5">
-        <button onClick={this.viewDesktop}>Desktop</button>
-        <button onClick={this.viewMobile}>Mobile</button>
         {schema}
       </div>
       <div className="col-lg-7">
         <div><i onClick={this.viewDesktop} className="fa fa-desktop fa-2x" aria-hidden="true" style={{cursor:"pointer"}}></i> <i style={{cursor:"pointer"}} className="fa fa-mobile fa-2x" aria-hidden="true" onClick={this.viewMobile}></i> </div>
         <div className="resizer">
-          <iframe src={"http://localhost:8080/app/"+this.state.uri+"/page"} style={this.iframeStyle()}/>
+          <iframe ref={(f) => this.iframe = f } src={"http://localhost:8080/app/"+this.state.uri+"/page"} style={this.iframeStyle()}/>
         </div>
       </div>
 
@@ -127,17 +135,17 @@ class FacebookApplication extends Component {
 
 }
 
-const Field = ({field}) => {
+const Field = ({field, app}) => {
   if (field.type == 'Text') {
     return (
       <div className="form-group">
-        <label>{field.label}</label> <input name={field.name} type="text" className="form-control" onChange={this.handleInputChange} value="FIXME"/>
+        <label>{field.label}</label> <input name={field.name} type="text" className="form-control" onChange={app.handleInputChange} value={app.state.schemaValues[field.name]}/>
       </div>
     );
   } else if (field.type == 'Image') {
     return (
     <div className="form-group">
-      <label>{field.label}</label> <input name={field.name} type="file" className="form-control" value=""/>
+      <label>{field.label}</label> <input name={field.name} type="file" className="form-control" onChange={this.handleInputChange}/>
     </div>
     )
   }
