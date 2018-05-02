@@ -4,6 +4,7 @@ import PDF from 'react-pdf-js';
 import PitchPageImage from './PitchPageImage.js';
 import ImageOverlay from './ImageOverlay.js';
 import Service from './components/Service.js';
+import AceEditor from 'react-ace';
 import './PitchPage.css';
 
 // const PageTypes = [
@@ -27,6 +28,7 @@ class PitchPage extends Component {
 
 
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleMarkdownChange = this.handleMarkdownChange.bind(this);
 
     this.handleImageManualChange = this.handleImageManualChange.bind(this);
     this.handleImageDragChange = this.handleImageDragChange.bind(this);
@@ -124,6 +126,17 @@ class PitchPage extends Component {
     this.ajaxUpdate(name);
   }
 
+  handleMarkdownChange(newValue) {
+    const name = 'text';
+
+    this.setState({
+      [name]: newValue
+    });
+
+    this.ajaxUpdate(name);
+  }
+
+
   ajaxUpdate(name) {
     Service.updatePage(this.state.pitchId, this.state.id, name, this.state)
     .then(this.triggerPdfRefresh);
@@ -140,7 +153,9 @@ class PitchPage extends Component {
     (
       <div className="form-group">
         <label htmlFor={"content" + this.state.id}>Page content</label>
-        <textarea className="form-control pageContent" id={"content" + this.state.id} name="text" rows="10" value={this.state.text} onChange={this.handleInputChange}></textarea>
+
+
+  <textarea className="form-control pageContent" id={"content" + this.state.id} name="oldtext" rows="10" value={this.state.text} onChange={this.handleInputChange}></textarea>
       </div>
     ) : ( null)
 

@@ -6,7 +6,7 @@ import ImageOverlay from './ImageOverlay.js';
 import Service from './components/Service.js';
 import './PitchPage.css';
 
-
+const catchBase = process.env.REACT_APP_CATCH_ENDPOINT + '/app/';
 
 
 class FacebookApplication extends Component {
@@ -34,6 +34,7 @@ class FacebookApplication extends Component {
     this.viewMobile = this.viewMobile.bind(this);
     this.constructSchema = this.constructSchema.bind(this);
     this.triggerIframeRefresh = this.triggerIframeRefresh.bind(this);
+    this.uploadFile = this.uploadFile.bind(this);
   }
 
   debounce(a,b,c){
@@ -61,6 +62,7 @@ class FacebookApplication extends Component {
         this.setState(data);
         this.triggerIframeRefresh();
         Service.getFacebookTemplate(this.state.template).then(data => this.setState({template:data}));
+        Service.getCatchImages(this.state.id).then(data => this.setState({images:data}));
     }} );
 
   }
@@ -75,6 +77,14 @@ class FacebookApplication extends Component {
     });
 
     this.ajaxUpdate(name);
+  }
+
+  uploadFile(files) {
+    const file = files[0];
+    Service.uploadCatchFile(this.state.id, file)
+    .then(data => {
+        this.setState({images:data});
+      });
   }
 
 
@@ -112,7 +122,7 @@ class FacebookApplication extends Component {
   }
 
   triggerIframeRefresh() {
-    this.setState({iframeUri:'https://clientapps.relay.tagtheagency.com/app/' + this.state.uri + '/page?'+Math.random()});
+    this.setState({iframeUri:catchBase + this.state.uri + '/page?'+Math.random()});
   }
 
   iframeStyle() {
@@ -141,7 +151,10 @@ class FacebookApplication extends Component {
         <div className="form-group">
           <label>Promotion Name</label>
           <input type="text" name="name" className="form-control" onChange={this.handleInputChange} value={this.state.name} />
-
+        </div>
+        <div className="form-group">
+          <label>Upload images</label>
+          <input type="file" name="fileUpload" onChange={(e) => this.uploadFile(e.target.files)} />
         </div>
         {schema}
       </div>
@@ -174,9 +187,20 @@ const Field = ({field, app}) => {
       </div>
     );
   } else if (field.type == 'Image') {
+    if (app.state.images == null) {
+      return (<p><label>{field.label}</label> Loading images</p>);
+    }
+    if (app.state.images.length == 0) {
+      return (<p><label>{field.label}</label> First upload an image before you can select one</p>)
+    }
     return (
     <div className="form-group">
-      <label>{field.label}</label> <input name={field.name} type="file" className="form-control" onChange={app.handleSchemaInputChange}/>
+      <label>{field.label}</label>
+      <select name={field.name} onChange={app.handleSchemaInputChange} value={app.state.schemaValues[field.name]}>
+        <option value={null}>Select an image</option>
+        {app.state.images.map((image, index) => (<option key={index} value={image}>{image}</option>))}
+
+      </select>
     </div>
     )
   }

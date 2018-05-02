@@ -2,8 +2,9 @@ import { withRouter } from "react-router-dom";
 import AuthService from "./AuthService.js";
 
 const apiBase = process.env.REACT_APP_API_ENDPOINT;
+const catchApiBase = process.env.REACT_APP_CATCH_ENDPOINT + '/admin/api/';
 //const catchApiBase = 'http://localhost:8080/admin/api/';
-const catchApiBase = 'https://clientapps.relay.tagtheagency.com/admin/api/';
+//const catchApiBase = 'https://clientapps.relay.tagtheagency.com/admin/api/';
 const pitchApiBase = apiBase + '/pitch/';
 const briefApiBase = apiBase + '/briefs/';
 
@@ -118,6 +119,16 @@ const Service = {
     });
   },
 
+  uploadCatchFile: (catchId, file) => {
+    const uploadURL = catchApiBase+'application/'+catchId+'/uploadFile';
+    var data = new FormData();
+    data.append('file', file);
+    return Auth.fetch(uploadURL, {
+      method: 'POST',
+      body: data,
+    }, false);
+  },
+
   getFacebookApps: () => {
     const url = catchApiBase + 'applications';
     return Auth.fetch(url);
@@ -125,6 +136,11 @@ const Service = {
 
   getFacebookApplication: (id) => {
     const url = catchApiBase + 'application/'+id;
+    return Auth.fetch(url);
+  },
+
+  getCatchImages: (id) => {
+    const url = catchApiBase + 'application/'+id+'/images';
     return Auth.fetch(url);
   },
 
