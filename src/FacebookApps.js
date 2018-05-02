@@ -28,7 +28,7 @@ constructor(props) {
 }
 
 createApplication() {
-  Service.createApplication()
+  Service.createCatchApplication("Untitled")
   .then(data => {
     const applications = this.state.applications;
     applications.push(data);

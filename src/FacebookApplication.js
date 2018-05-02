@@ -21,11 +21,14 @@ class FacebookApplication extends Component {
         name: '',
         notFound: false,
         render: 'desktop',
-        template: null
+        template: null,
+        iframeUri: null
       };
 
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSchemaInputChange = this.handleSchemaInputChange.bind(this);
     this.ajaxUpdate = this.debounce(this.ajaxUpdate, 1000, false);
+    this.ajaxUpdateSchema = this.debounce(this.ajaxUpdateSchema, 1000, false);
     this.iframeStyle = this.iframeStyle.bind(this);
     this.viewDesktop = this.viewDesktop.bind(this);
     this.viewMobile = this.viewMobile.bind(this);
@@ -55,13 +58,27 @@ class FacebookApplication extends Component {
     })
     .then(data => {
       if (data) {
-        this.setState(data)
+        this.setState(data);
+        this.triggerIframeRefresh();
         Service.getFacebookTemplate(this.state.template).then(data => this.setState({template:data}));
     }} );
 
   }
 
   handleInputChange(event) {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({
+      name: value
+    });
+
+    this.ajaxUpdate(name);
+  }
+
+
+  handleSchemaInputChange(event) {
     const target = event.target;
     const value = target.type === 'file' ? target.files[0] : target.value;
     const name = target.name;
@@ -72,9 +89,7 @@ class FacebookApplication extends Component {
       schemaValues: schemaValues
     });
 
-    this.ajaxUpdate(name);
-
-    console.log(this.state);
+    this.ajaxUpdateSchema(name);
   }
 
   viewDesktop() {
@@ -85,15 +100,19 @@ class FacebookApplication extends Component {
     this.setState({render: 'mobile'});
   }
 
-  ajaxUpdate(name) {
+  ajaxUpdateSchema(name) {
+    Service.updateCatchValues(this.state.id, this.state[name])
+    .then(this.triggerIframeRefresh);
+  }
+
+  ajaxUpdateSchema(name) {
     console.log(this.state.id)
     Service.updateCatchSchemaValues(this.state.id, this.state.schemaValues)
     .then(this.triggerIframeRefresh);
   }
 
   triggerIframeRefresh() {
-    this.setState({uri:this.state.uri});
-    //TODO make iframe refresh.  this.iframe.contentWindow.location.reload(true);
+    this.setState({iframeUri:'https://clientapps.relay.tagtheagency.com/app/' + this.state.uri + '/page?'+Math.random()});
   }
 
   iframeStyle() {
@@ -119,12 +138,17 @@ class FacebookApplication extends Component {
       return (
       <div className="row">
       <div className="col-lg-5">
+        <div className="form-group">
+          <label>Promotion Name</label>
+          <input type="text" name="name" className="form-control" onChange={this.handleInputChange} value={this.state.name} />
+
+        </div>
         {schema}
       </div>
       <div className="col-lg-7">
         <div><i onClick={this.viewDesktop} className="fa fa-desktop fa-2x" aria-hidden="true" style={{cursor:"pointer"}}></i> <i style={{cursor:"pointer"}} className="fa fa-mobile fa-2x" aria-hidden="true" onClick={this.viewMobile}></i> </div>
         <div className="resizer">
-          <iframe ref={(f) => this.iframe = f } src={"http://localhost:8080/app/"+this.state.uri+"/page"} style={this.iframeStyle()}/>
+          <iframe ref={(f) => this.iframe = f } src={this.state.iframeUri} style={this.iframeStyle()}/>
         </div>
       </div>
 
@@ -136,16 +160,23 @@ class FacebookApplication extends Component {
 }
 
 const Field = ({field, app}) => {
-  if (field.type == 'Text') {
+  if (field.type == 'Text' && field.multiline) {
     return (
       <div className="form-group">
-        <label>{field.label}</label> <input name={field.name} type="text" className="form-control" onChange={app.handleInputChange} value={app.state.schemaValues[field.name]}/>
+        <label>{field.label}</label> <textarea name={field.name} type="text" className="form-control" onChange={app.handleSchemaInputChange} value={app.state.schemaValues[field.name]}/>
+      </div>
+    );
+
+  } else if (field.type == 'Text' ) {
+    return (
+      <div className="form-group">
+        <label>{field.label}</label> <input name={field.name} type="text" className="form-control" onChange={app.handleSchemaInputChange} value={app.state.schemaValues[field.name]}/>
       </div>
     );
   } else if (field.type == 'Image') {
     return (
     <div className="form-group">
-      <label>{field.label}</label> <input name={field.name} type="file" className="form-control" onChange={this.handleInputChange}/>
+      <label>{field.label}</label> <input name={field.name} type="file" className="form-control" onChange={app.handleSchemaInputChange}/>
     </div>
     )
   }

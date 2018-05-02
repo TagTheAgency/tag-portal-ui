@@ -2,7 +2,8 @@ import { withRouter } from "react-router-dom";
 import AuthService from "./AuthService.js";
 
 const apiBase = process.env.REACT_APP_API_ENDPOINT;
-const catchApiBase = 'http://localhost:8080/admin/api/';
+//const catchApiBase = 'http://localhost:8080/admin/api/';
+const catchApiBase = 'https://clientapps.relay.tagtheagency.com/admin/api/';
 const pitchApiBase = apiBase + '/pitch/';
 const briefApiBase = apiBase + '/briefs/';
 
@@ -110,6 +111,13 @@ const Service = {
     })
   },
 
+  createCatchApplication: (name) => {
+    const url = catchApiBase + 'application?name='+name;
+    return Auth.fetch(url, {
+      method: 'POST'
+    });
+  },
+
   getFacebookApps: () => {
     const url = catchApiBase + 'applications';
     return Auth.fetch(url);
@@ -132,6 +140,14 @@ const Service = {
       body: JSON.stringify(schemaValues)
     });
   },
+
+//  updateCatchValues: (id, name, value) => {
+//    const url = catchApiBase + 'application/' +id+'/'+name;
+//    return Auth.fetch(url, {
+//      method: 'POST',
+//      body: JSON.stringify(schemaValues)
+//    });
+//  },
 
   catchErrors: (error) => {
     console.warn(error);
