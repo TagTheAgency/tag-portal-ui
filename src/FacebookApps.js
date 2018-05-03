@@ -15,8 +15,26 @@ const catchRoot = `${process.env.PUBLIC_URL}/catch`;
 const columns = [{
   Header: 'Title',
   accessor: 'name', // String-based value accessors!
-  Cell: props => {console.log(props); return (<a href={catchRoot + '/' + props.original.id} title="Edit">{props.value}</a>)}
-}];
+  Cell: props => {return (<a href={catchRoot + '/' + props.original.id} title="Edit">{props.value}</a>)}
+}, {
+  Header: 'Status',
+  maxWidth: 100,
+  accessor: 'status'
+}, {
+  Header: 'Dropbox path',
+  accessor: 'dropboxPath'
+}, {
+  Header: 'Facebook account',
+  accessor: 'facebookPath'
+}, {
+  Header: 'Entries',
+  accessor: 'entries',
+  maxWidth: 100,
+  Cell: props => <a style={{cursor:"pointer"}} onClick={() => {}} title="Download CSV"><i className="fa fa-file-excel-o" aria-hidden="true"></i><span className="sr-only">Download CSV</span></a>
+
+}
+
+];
 
 class FacebookApps extends Component {
 

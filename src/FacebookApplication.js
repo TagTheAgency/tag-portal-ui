@@ -22,7 +22,8 @@ class FacebookApplication extends Component {
         notFound: false,
         render: 'desktop',
         template: null,
-        iframeUri: null
+        iframeUri: null,
+        section: 'template'
       };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -33,8 +34,11 @@ class FacebookApplication extends Component {
     this.viewDesktop = this.viewDesktop.bind(this);
     this.viewMobile = this.viewMobile.bind(this);
     this.constructSchema = this.constructSchema.bind(this);
+    this.constructImages = this.constructImages.bind(this);
+    this.constructFields = this.constructFields.bind(this);
     this.triggerIframeRefresh = this.triggerIframeRefresh.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
+    this.show = this.show.bind(this);
   }
 
   debounce(a,b,c){
@@ -87,6 +91,10 @@ class FacebookApplication extends Component {
       });
   }
 
+  show(which) {
+    this.setState({section:which});
+  }
+
 
   handleSchemaInputChange(event) {
     const target = event.target;
@@ -134,29 +142,68 @@ class FacebookApplication extends Component {
   }
 
   constructSchema() {
-    return(
+    return this.state.template == null ? (<p>Loading template schema</p>) : (
       <div>
         {this.state.template.fields.map((field,idx) => <Field key={idx} field={field} app={this}/>)}
       </div>
     )
   }
 
-  render() {
-
-    const schema = this.state.template == null ? (<p>Loading template schema</p>)
-      : this.constructSchema();
-      return (
-      <div className="row">
-      <div className="col-lg-5">
-        <div className="form-group">
-          <label>Promotion Name</label>
-          <input type="text" name="name" className="form-control" onChange={this.handleInputChange} value={this.state.name} />
-        </div>
+  constructImages() {
+    return this.state.images == null ? (<p>Loading images</p>)
+      : (
+      <div>
         <div className="form-group">
           <label>Upload images</label>
           <input type="file" name="fileUpload" onChange={(e) => this.uploadFile(e.target.files)} />
         </div>
+      </div>
+    )
+  }
+
+  constructFields() {
+    return this.state.applicationFields == null ? (<p>Loading fields</p>)
+      : (
+        <div>
+          {this.state.applicationFields.map((entry, idx) => (<p key={idx}>{entry.name} <checkbox checked={entry.required}/></p>))}
+          <div className="form-group">
+            <label>New field</label>
+            <input type="text" name="additionalField"/>
+          </div>
+        </div>
+    )
+  }
+
+  render() {
+
+    const schema = this.state.section == 'template' ? this.constructSchema() : null;
+
+    const images = this.state.section == 'images' ? this.constructImages() : null;
+
+    const fields = this.state.section == 'fields' ? this.constructFields() : null;
+
+      return (
+      <div className="row">
+      <div className="col-lg-5">
+        <ul className="nav nav-tabs">
+          <li className="nav-item">
+            <a style={{cursor:'pointer'}} className={this.state.section == 'template' ? "nav-link active" : "nav-link"} onClick={() => this.show('template')}>Edit template</a>
+          </li>
+          <li className="nav-item">
+            <a style={{cursor:'pointer'}} className={this.state.section == 'images' ? "nav-link active" : "nav-link"} onClick={() => this.show('images')}>Upload images</a>
+          </li>
+          <li className="nav-item">
+            <a style={{cursor:'pointer'}} className={this.state.section == 'fields' ? "nav-link active" : "nav-link"} onClick={() => this.show('fields')}>Add fields</a>
+          </li>
+        </ul>
         {schema}
+        {images}
+        {fields}
+
+        <div className="form-group">
+          <label>Promotion Name</label>
+          <input type="text" name="name" className="form-control" onChange={this.handleInputChange} value={this.state.name} />
+        </div>
       </div>
       <div className="col-lg-7">
         <div><i onClick={this.viewDesktop} className="fa fa-desktop fa-2x" aria-hidden="true" style={{cursor:"pointer"}}></i> <i style={{cursor:"pointer"}} className="fa fa-mobile fa-2x" aria-hidden="true" onClick={this.viewMobile}></i> </div>
