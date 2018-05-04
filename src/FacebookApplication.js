@@ -4,6 +4,7 @@ import PDF from 'react-pdf-js';
 import PitchPageImage from './PitchPageImage.js';
 import ImageOverlay from './ImageOverlay.js';
 import Service from './components/Service.js';
+import ReactTable from 'react-table';
 import './PitchPage.css';
 
 const catchBase = process.env.REACT_APP_CATCH_ENDPOINT + '/app/';
@@ -162,13 +163,32 @@ class FacebookApplication extends Component {
   }
 
   constructFields() {
+
+    const columns = [{
+      Header: 'name',
+      accessor: 'name'
+    }, {
+      Header: 'Label',
+      accessor: 'label'
+    }, {
+      Header: 'Required',
+      accessor: 'required'
+    }];
+
+    const addAdditionalField = (field) => {console.log('adding field', field)};
+
     return this.state.applicationFields == null ? (<p>Loading fields</p>)
       : (
         <div>
-          {this.state.applicationFields.map((entry, idx) => (<p key={idx}>{entry.name} <checkbox checked={entry.required}/></p>))}
+        <ReactTable
+          data={this.state.applicationFields}
+          columns={columns}
+          showPagination={false}
+          minRows={1}
+        />
           <div className="form-group">
             <label>New field</label>
-            <input type="text" name="additionalField"/>
+            <input type="text" name="additionalField" />
           </div>
         </div>
     )
@@ -182,39 +202,61 @@ class FacebookApplication extends Component {
 
     const fields = this.state.section == 'fields' ? this.constructFields() : null;
 
+    const status = (()=>{
+         switch(this.state.status) {
+               case 'DEVELOPMENT': return (<div>Currently in development. <button className="btn btn-primary">Go live</button></div>);
+               case 'LIVE': return (<div>App is live.  You cannot make changes. <button className="btn btn-primary">Archive</button></div>);
+               case 'ARCHIVE': return (<div>Archived app. <button className="btn btn-primary">Duplicate</button></div>);
+             }
+    })();
+
+    const editApp = this.state.status == 'DEVELOPMENT' ? (
+      <div className="card mb-3">
+        <div className="card-header">
+          Edit application
+        </div>
+        <div className="card-body">
+          <ul className="nav nav-tabs">
+            <li className="nav-item">
+              <a style={{cursor:'pointer'}} className={this.state.section == 'template' ? "nav-link active" : "nav-link"} onClick={() => this.show('template')}>Edit template</a>
+            </li>
+            <li className="nav-item">
+              <a style={{cursor:'pointer'}} className={this.state.section == 'images' ? "nav-link active" : "nav-link"} onClick={() => this.show('images')}>Upload images</a>
+            </li>
+            <li className="nav-item">
+              <a style={{cursor:'pointer'}} className={this.state.section == 'fields' ? "nav-link active" : "nav-link"} onClick={() => this.show('fields')}>Add fields</a>
+            </li>
+          </ul>
+          {schema}
+          {images}
+          {fields}
+        </div>
+      </div>
+    ) : null;
+
       return (
       <div className="row">
-      <div className="col-lg-5">
-        <ul className="nav nav-tabs">
-          <li className="nav-item">
-            <a style={{cursor:'pointer'}} className={this.state.section == 'template' ? "nav-link active" : "nav-link"} onClick={() => this.show('template')}>Edit template</a>
-          </li>
-          <li className="nav-item">
-            <a style={{cursor:'pointer'}} className={this.state.section == 'images' ? "nav-link active" : "nav-link"} onClick={() => this.show('images')}>Upload images</a>
-          </li>
-          <li className="nav-item">
-            <a style={{cursor:'pointer'}} className={this.state.section == 'fields' ? "nav-link active" : "nav-link"} onClick={() => this.show('fields')}>Add fields</a>
-          </li>
-        </ul>
-        {schema}
-        {images}
-        {fields}
-
-        <div className="form-group">
-          <label>Promotion Name</label>
-          <input type="text" name="name" className="form-control" onChange={this.handleInputChange} value={this.state.name} />
+        <div className="col-lg-5">
+          <div className="card mb-3">
+            <div className="card-header">
+              Status
+            </div>
+            <div className="card-body">
+              {status}
+            </div>
+          </div>
+          {editApp}
         </div>
-      </div>
-      <div className="col-lg-7">
-        <div><i onClick={this.viewDesktop} className="fa fa-desktop fa-2x" aria-hidden="true" style={{cursor:"pointer"}}></i> <i style={{cursor:"pointer"}} className="fa fa-mobile fa-2x" aria-hidden="true" onClick={this.viewMobile}></i> </div>
-        <div className="resizer">
-          <iframe ref={(f) => this.iframe = f } src={this.state.iframeUri} style={this.iframeStyle()}/>
+        <div className="col-lg-7">
+          <div><i onClick={this.viewDesktop} className="fa fa-desktop fa-2x" aria-hidden="true" style={{cursor:"pointer"}}></i> <i style={{cursor:"pointer"}} className="fa fa-mobile fa-2x" aria-hidden="true" onClick={this.viewMobile}></i> </div>
+          <div className="resizer">
+            <iframe ref={(f) => this.iframe = f } src={this.state.iframeUri} style={this.iframeStyle()}/>
+          </div>
         </div>
-      </div>
 
       </div>
-    )
-    }
+  )
+}
 
 
 }

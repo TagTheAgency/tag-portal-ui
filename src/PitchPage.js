@@ -4,7 +4,6 @@ import PDF from 'react-pdf-js';
 import PitchPageImage from './PitchPageImage.js';
 import ImageOverlay from './ImageOverlay.js';
 import Service from './components/Service.js';
-import AceEditor from 'react-ace';
 import './PitchPage.css';
 
 // const PageTypes = [
