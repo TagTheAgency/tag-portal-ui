@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Service from './components/Service.js';
 import ReactTable from 'react-table';
-import './PitchPage.css';
+import './FacebookApplication.css';
 
 const catchBase = process.env.REACT_APP_CATCH_ENDPOINT + '/app/';
 
@@ -226,8 +226,9 @@ class FacebookApplication extends Component {
     ) : null;
 
       return (
-      <div className="row">
-        <div className="col-lg-5">
+      <div className="container-fluid h-100">
+      <div className="row h-100">
+        <div className="col-lg-7">
           <div className="card mb-3">
             <div className="card-header">
               Status
@@ -238,14 +239,19 @@ class FacebookApplication extends Component {
           </div>
           {editApp}
         </div>
-        <div className="col-lg-7">
-          <div><i onClick={this.viewDesktop} className="fa fa-desktop fa-2x" aria-hidden="true" style={{cursor:"pointer"}}></i> <i style={{cursor:"pointer"}} className="fa fa-mobile fa-2x" aria-hidden="true" onClick={this.viewMobile}></i> </div>
-          <div className="resizer">
-            <iframe title="previewIframe" ref={(f) => this.iframe = f } src={this.state.iframeUri} style={this.iframeStyle()}/>
+        <div className="col-lg-5 h-100">
+          <div className="navestylemenublock sticky-top">
+            <div><i onClick={this.viewDesktop} className="fa fa-desktop fa-2x" aria-hidden="true" style={{cursor:"pointer"}}></i> <i style={{cursor:"pointer"}} className="fa fa-mobile fa-2x" aria-hidden="true" onClick={this.viewMobile}></i> </div>
+            <div className="resizer">
+              <iframe title="previewIframe" ref={(f) => this.iframe = f } src={this.state.iframeUri} style={this.iframeStyle()}/>
+            </div>
           </div>
+
         </div>
 
       </div>
+      </div>
+
   )
 }
 
