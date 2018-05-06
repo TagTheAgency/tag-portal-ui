@@ -11,7 +11,7 @@ class Application extends Component {
   render() {
     return (
       <div className="App">
-        <Navigation/>
+        <Navigation logout={this.props.logout} />
 			<Switch>
 				<Route path="/dashboard" component={Dashboard} />
 				<Route path="/pitch" component={Pitch} />
