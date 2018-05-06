@@ -29,6 +29,10 @@ class Login extends Component {
 
 			this.Auth.login(response.tokenId)
         .then(res =>{
+					if (res.error) {
+						alert(res.error);
+						return;
+					}
 					const redirect = this.props.location.state.redirect || '/dashboard';
 //					console.log('replacing this.props.history', this.props.history);
            this.props.history.replace(redirect);
