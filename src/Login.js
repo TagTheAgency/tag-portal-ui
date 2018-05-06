@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Route, Redirect } from 'react-router-dom';
 import GoogleLogin from 'react-google-login';
 //import Authentication from './components/Authentication.js';
 import AuthService from './components/AuthService';

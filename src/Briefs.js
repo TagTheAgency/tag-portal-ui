@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Navigation from './Navigation.js';
 import Service from './components/Service.js';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
@@ -41,6 +40,7 @@ class Briefs extends Component {
   render() {
 
     const { selectedOption, selectedProject } = this.state;
+    console.log(selectedProject);
 
     const projects = this.state.projects != null && this.state.projects.length > 0 ? (
       <div className="list-group">

@@ -1,8 +1,4 @@
 import React, { Component } from 'react';
-import Dropzone from 'react-dropzone';
-import PDF from 'react-pdf-js';
-import PitchPageImage from './PitchPageImage.js';
-import ImageOverlay from './ImageOverlay.js';
 import Service from './components/Service.js';
 import ReactTable from 'react-table';
 import './PitchPage.css';
@@ -120,11 +116,6 @@ class FacebookApplication extends Component {
   }
 
   ajaxUpdateSchema(name) {
-    Service.updateCatchValues(this.state.id, this.state[name])
-    .then(this.triggerIframeRefresh);
-  }
-
-  ajaxUpdateSchema(name) {
     console.log(this.state.id)
     Service.updateCatchSchemaValues(this.state.id, this.state.schemaValues)
     .then(this.triggerIframeRefresh);
@@ -175,8 +166,6 @@ class FacebookApplication extends Component {
       accessor: 'required'
     }];
 
-    const addAdditionalField = (field) => {console.log('adding field', field)};
-
     return this.state.applicationFields == null ? (<p>Loading fields</p>)
       : (
         <div>
@@ -196,21 +185,23 @@ class FacebookApplication extends Component {
 
   render() {
 
-    const schema = this.state.section == 'template' ? this.constructSchema() : null;
+    const schema = this.state.section === 'template' ? this.constructSchema() : null;
 
-    const images = this.state.section == 'images' ? this.constructImages() : null;
+    const images = this.state.section === 'images' ? this.constructImages() : null;
 
-    const fields = this.state.section == 'fields' ? this.constructFields() : null;
+    const fields = this.state.section === 'fields' ? this.constructFields() : null;
 
     const status = (()=>{
          switch(this.state.status) {
                case 'DEVELOPMENT': return (<div>Currently in development. <button className="btn btn-primary">Go live</button></div>);
                case 'LIVE': return (<div>App is live.  You cannot make changes. <button className="btn btn-primary">Archive</button></div>);
                case 'ARCHIVE': return (<div>Archived app. <button className="btn btn-primary">Duplicate</button></div>);
+               default:
+                return null;
              }
     })();
 
-    const editApp = this.state.status == 'DEVELOPMENT' ? (
+    const editApp = this.state.status === 'DEVELOPMENT' ? (
       <div className="card mb-3">
         <div className="card-header">
           Edit application
@@ -218,13 +209,13 @@ class FacebookApplication extends Component {
         <div className="card-body">
           <ul className="nav nav-tabs">
             <li className="nav-item">
-              <a style={{cursor:'pointer'}} className={this.state.section == 'template' ? "nav-link active" : "nav-link"} onClick={() => this.show('template')}>Edit template</a>
+              <a style={{cursor:'pointer'}} className={this.state.section === 'template' ? "nav-link active" : "nav-link"} onClick={() => this.show('template')}>Edit template</a>
             </li>
             <li className="nav-item">
-              <a style={{cursor:'pointer'}} className={this.state.section == 'images' ? "nav-link active" : "nav-link"} onClick={() => this.show('images')}>Upload images</a>
+              <a style={{cursor:'pointer'}} className={this.state.section === 'images' ? "nav-link active" : "nav-link"} onClick={() => this.show('images')}>Upload images</a>
             </li>
             <li className="nav-item">
-              <a style={{cursor:'pointer'}} className={this.state.section == 'fields' ? "nav-link active" : "nav-link"} onClick={() => this.show('fields')}>Add fields</a>
+              <a style={{cursor:'pointer'}} className={this.state.section === 'fields' ? "nav-link active" : "nav-link"} onClick={() => this.show('fields')}>Add fields</a>
             </li>
           </ul>
           {schema}
@@ -250,7 +241,7 @@ class FacebookApplication extends Component {
         <div className="col-lg-7">
           <div><i onClick={this.viewDesktop} className="fa fa-desktop fa-2x" aria-hidden="true" style={{cursor:"pointer"}}></i> <i style={{cursor:"pointer"}} className="fa fa-mobile fa-2x" aria-hidden="true" onClick={this.viewMobile}></i> </div>
           <div className="resizer">
-            <iframe ref={(f) => this.iframe = f } src={this.state.iframeUri} style={this.iframeStyle()}/>
+            <iframe title="previewIframe" ref={(f) => this.iframe = f } src={this.state.iframeUri} style={this.iframeStyle()}/>
           </div>
         </div>
 
@@ -262,24 +253,24 @@ class FacebookApplication extends Component {
 }
 
 const Field = ({field, app}) => {
-  if (field.type == 'Text' && field.multiline) {
+  if (field.type === 'Text' && field.multiline) {
     return (
       <div className="form-group">
         <label>{field.label}</label> <textarea name={field.name} type="text" className="form-control" onChange={app.handleSchemaInputChange} value={app.state.schemaValues[field.name]}/>
       </div>
     );
 
-  } else if (field.type == 'Text' ) {
+  } else if (field.type === 'Text' ) {
     return (
       <div className="form-group">
         <label>{field.label}</label> <input name={field.name} type="text" className="form-control" onChange={app.handleSchemaInputChange} value={app.state.schemaValues[field.name]}/>
       </div>
     );
-  } else if (field.type == 'Image') {
+  } else if (field.type === 'Image') {
     if (app.state.images == null) {
       return (<p><label>{field.label}</label> Loading images</p>);
     }
-    if (app.state.images.length == 0) {
+    if (app.state.images.length === 0) {
       return (<p><label>{field.label}</label> First upload an image before you can select one</p>)
     }
     return (

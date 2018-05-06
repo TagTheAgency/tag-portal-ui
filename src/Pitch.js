@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Navigation from './Navigation.js';
 import { Route } from "react-router-dom";
 import PitchItem from "./PitchItem.js";
 import BreadCrumbs from "./components/BreadCrumbs.js";

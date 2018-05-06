@@ -14,8 +14,6 @@ class Navigation extends React.Component {
 		}
 
 		this.toggleSideNav = this.toggleSideNav.bind(this);
-
-		console.log("Navigation props: ", this.props);
 	}
 
 	toggleSideNav() {
