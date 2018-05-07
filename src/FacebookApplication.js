@@ -24,7 +24,8 @@ class FacebookApplication extends Component {
         render: 'desktop',
         template: null,
         iframeUri: null,
-        section: 'template'
+        section: 'template',
+        newField: {name:"",label:"",required:false}
       };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -40,6 +41,7 @@ class FacebookApplication extends Component {
     this.triggerIframeRefresh = this.triggerIframeRefresh.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
     this.show = this.show.bind(this);
+    this.handleNewField = this.handleNewField.bind(this);
   }
 
   debounce(a,b,c){
@@ -162,6 +164,29 @@ class FacebookApplication extends Component {
     )
   }
 
+  handleNewField(e) {
+    const newField = this.state.newField;
+    if (e.target.type === 'submit') {
+      const applicationFields = this.state.applicationFields;
+      applicationFields.push({name:newField.name, label:newField.label, required: newField.required});
+      this.setState({applicationFields: applicationFields});
+      Service.updateApplicationFields(this.state.id, this.state.applicationFields);
+      newField.name = "";
+      newField.label = "";
+      newField.required = false;
+      this.setState({newField: newField});
+      return;
+
+    } else if (e.target.type === 'checkbox') {
+      newField.required = e.target.checked;
+    } else if (e.target.name === 'label') {
+      newField.label = e.target.value;
+      newField.name = newField.label.toLowerCase().replace(/[^a-zA-Z0-9_-]/,'_');
+    }
+
+    this.setState({newField: newField});
+  }
+
   constructFields() {
 
     const columns = [{
@@ -177,6 +202,8 @@ class FacebookApplication extends Component {
 
     const addAdditionalField = (field) => {console.log('adding field', field)};
 
+    const newField = this.state.newField;
+
     return this.state.applicationFields == null ? (<p>Loading fields</p>)
       : (
         <div>
@@ -186,11 +213,21 @@ class FacebookApplication extends Component {
           showPagination={false}
           minRows={1}
         />
-          <div className="form-group">
-            <label>New field</label>
-            <input type="text" name="additionalField" />
-          </div>
+      <div className="form-row">
+        <div className="col-auto">
+          <input type="text" name="label" placeholder="Label" value={newField.label} onChange={this.handleNewField}/>
         </div>
+        <div className="col-auto">
+          <input type="text" name="name" placeholder="Name" value={newField.name} onChange={this.handleNewField}/>
+        </div>
+        <div className="col-auto">
+          Required: <input type="checkbox" name="required"  checked={newField.required} onChange={this.handleNewField}/>
+        </div>
+        <div className="col-auto">
+          <button className="btn btn-primary" onClick={this.handleNewField}>Create</button>
+        </div>
+      </div>
+    </div>
     )
   }
 

@@ -157,6 +157,14 @@ const Service = {
     });
   },
 
+  updateApplicationFields: (id, fields) => {
+    const url = catchApiBase + 'application/' + id + '/fields';
+    return Auth.fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify(fields)
+    });
+  },
+
 //  updateCatchValues: (id, name, value) => {
 //    const url = catchApiBase + 'application/' +id+'/'+name;
 //    return Auth.fetch(url, {

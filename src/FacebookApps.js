@@ -18,7 +18,7 @@ const columns = [{
   Cell: props => {return (<a href={catchRoot + '/' + props.original.id} title="Edit">{props.value}</a>)}
 }, {
   Header: 'Status',
-  maxWidth: 100,
+  maxWidth: 150,
   accessor: 'status'
 }, {
   Header: 'Dropbox path',
