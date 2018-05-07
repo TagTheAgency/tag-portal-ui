@@ -180,6 +180,8 @@ class FacebookApplication extends Component {
 
   constructFields() {
 
+    const newField = this.state.newField;
+
     const columns = [{
       Header: 'name',
       accessor: 'name'
