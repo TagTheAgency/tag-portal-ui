@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Route, Redirect } from 'react-router-dom';
 import GoogleLogin from 'react-google-login';
 //import Authentication from './components/Authentication.js';
 import AuthService from './components/AuthService';
@@ -7,7 +6,9 @@ import AuthService from './components/AuthService';
 class Login extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			redirectToReferrer: false
+		};
 
 		this.responseGoogle = this.responseGoogle.bind(this);
 
@@ -15,9 +16,10 @@ class Login extends Component {
 
 	}
 
-	componentWillMount(){
-	    if(this.Auth.loggedIn())
+	componentWillMount() {
+	    if(this.Auth.loggedIn()) {
 	        this.props.history.replace('/dashboard');
+			}
 	}
 
 	responseGoogle(response) {
@@ -27,8 +29,13 @@ class Login extends Component {
 
 			this.Auth.login(response.tokenId)
         .then(res =>{
-					console.log('replacig this.props.history', this.props.history);
-           this.props.history.replace('/dashboard');
+					if (res.error) {
+						alert(res.error);
+						return;
+					}
+					const redirect = this.props.location.state.redirect || '/dashboard';
+//					console.log('replacing this.props.history', this.props.history);
+           this.props.history.replace(redirect);
         })
         .catch(err =>{
             alert(err);
@@ -37,13 +44,9 @@ class Login extends Component {
 	};
 
 	render() {
-		if (this.state.jwt) {
-			return (
-				<Route>
-					<Redirect to={{ pathname: '/dashboard' }} />
-				</Route>
-			)
-		}
+		console.log("Login is rendering");
+		console.log(this.props.location);
+
 		const errorMessage = this.state.error ? (<div className="alert alert-danger" role="alert">Error: {this.state.error}</div>) : null;
 		return (
 

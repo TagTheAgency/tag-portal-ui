@@ -12,7 +12,6 @@ export default class AuthService {
     const form = new FormData();
     form.append("token", token);
 
-    console.log(fetch, this.fetch);
     return fetch(`${this.domain}/security/`, {
       method: 'POST',
       body: form

@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import Navigation from './Navigation.js';
 import Service from './components/Service.js';
-import Select from 'react-select';
 import ReactTable from 'react-table';
 import FacebookApplication from './FacebookApplication.js';
 import BreadCrumbs from "./components/BreadCrumbs.js";

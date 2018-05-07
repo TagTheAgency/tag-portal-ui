@@ -226,7 +226,7 @@ class Navigation extends React.Component {
 			          </form>
 			        </li>
 			        <li className="nav-item">
-			          <a className="nav-link" data-toggle="modal" data-target="#exampleModal">
+			          <a className="nav-link" onClick={this.props.logout}>
 			            <i className="fa fa-fw fa-sign-out"></i>Logout</a>
 			        </li>
 			      </ul>
