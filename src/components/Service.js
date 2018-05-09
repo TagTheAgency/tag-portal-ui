@@ -181,6 +181,11 @@ const Service = {
     });
   },
 
+  getCatchEntries: (id) => {
+    const url = catchApiBase + 'application/' + id + '/entries';
+    return Auth.fetch(url);
+  },
+
 //  updateCatchValues: (id, name, value) => {
 //    const url = catchApiBase + 'application/' +id+'/'+name;
 //    return Auth.fetch(url, {

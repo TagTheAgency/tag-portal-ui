@@ -10,6 +10,10 @@ import 'react-select/dist/react-select.css';
 
 const catchRoot = `${process.env.PUBLIC_URL}/catch`;
 
+const showEntries = (id) => {
+  Service.getCatchEntries(id).then(data => console.log(data));
+}
+
 const columns = [{
   Header: 'Title',
   accessor: 'name', // String-based value accessors!
@@ -28,7 +32,7 @@ const columns = [{
   Header: 'Entries',
   accessor: 'entries',
   maxWidth: 100,
-  Cell: props => <a style={{cursor:"pointer"}} onClick={() => {}} title="Download CSV"><i className="fa fa-file-excel-o" aria-hidden="true"></i><span className="sr-only">Download CSV</span></a>
+  Cell: props => <a style={{cursor:"pointer"}} onClick={() => {showEntries(props.original.id)}} title="Download CSV"><i className="fa fa-file-excel-o" aria-hidden="true"></i><span className="sr-only">Download CSV</span></a>
 
 }
 
