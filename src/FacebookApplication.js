@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Service from './components/Service.js';
+import BootstrapCard from './components/BootstrapCard.js';
 import ReactTable from 'react-table';
+import CatchAppDetails from './CatchAppDetails.js';
 import './FacebookApplication.css';
 
 const catchBase = process.env.REACT_APP_CATCH_ENDPOINT + '/app/';
@@ -16,18 +18,24 @@ class FacebookApplication extends Component {
         id: -1,
         uri: '',
         name: '',
+        application: {
+          id: -1,
+          uri: '',
+          name: ''
+        },
         notFound: false,
         render: 'desktop',
         template: null,
         iframeUri: null,
+        iframeTarget: 'page',
         section: 'template',
         newField: {name:"",label:"",required:false}
       };
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSchemaInputChange = this.handleSchemaInputChange.bind(this);
-    this.ajaxUpdate = this.debounce(this.ajaxUpdate, 1000, false);
-    this.ajaxUpdateSchema = this.debounce(this.ajaxUpdateSchema, 1000, false);
+    this.ajaxUpdate = this.debounce(this.ajaxUpdate, 3000, false);
+    this.ajaxUpdateSchema = this.debounce(this.ajaxUpdateSchema, 3000, false);
     this.iframeStyle = this.iframeStyle.bind(this);
     this.viewDesktop = this.viewDesktop.bind(this);
     this.viewMobile = this.viewMobile.bind(this);
@@ -38,6 +46,7 @@ class FacebookApplication extends Component {
     this.uploadFile = this.uploadFile.bind(this);
     this.show = this.show.bind(this);
     this.handleNewField = this.handleNewField.bind(this);
+    this.updateApplication = this.updateApplication.bind(this);
   }
 
   debounce(a,b,c){
@@ -62,10 +71,11 @@ class FacebookApplication extends Component {
     })
     .then(data => {
       if (data) {
-        this.setState(data);
+        this.setState({application:data});
         this.triggerIframeRefresh();
-        Service.getFacebookTemplate(this.state.template).then(data => this.setState({template:data}));
-        Service.getCatchImages(this.state.id).then(data => this.setState({images:data}));
+        console.log(this.state);
+        Service.getFacebookTemplate(this.state.application.template).then(data => this.setState({template:data}));
+        Service.getCatchImages(this.state.application.id).then(data => this.setState({images:data}));
     }} );
 
   }
@@ -82,6 +92,11 @@ class FacebookApplication extends Component {
     this.ajaxUpdate(name);
   }
 
+  ajaxUpdate(name) {
+    Service.updateCatchApplication(this.state.application.id, this.state.application)
+    .then(this.triggerIframeRefresh());
+  }
+
   uploadFile(files) {
     const file = files[0];
     Service.uploadCatchFile(this.state.id, file)
@@ -94,16 +109,28 @@ class FacebookApplication extends Component {
     this.setState({section:which});
   }
 
+  updateApplication(app) {
+    console.log("Updating application: ", app);
+
+    const application = this.state.application;
+
+    application[app.name] = app.value;
+
+    this.setState({application:application});
+
+    this.ajaxUpdate(app.name);
+  }
 
   handleSchemaInputChange(event) {
     const target = event.target;
     const value = target.type === 'file' ? target.files[0] : target.value;
     const name = target.name;
 
-    const schemaValues = this.state.schemaValues;
+    const schemaValues = this.state.application.schemaValues;
+    const application = this.state.application;
     schemaValues[name] = value;
     this.setState({
-      schemaValues: schemaValues
+      application: application
     });
 
     this.ajaxUpdateSchema(name);
@@ -118,13 +145,14 @@ class FacebookApplication extends Component {
   }
 
   ajaxUpdateSchema(name) {
-    console.log(this.state.id)
-    Service.updateCatchSchemaValues(this.state.id, this.state.schemaValues)
-    .then(this.triggerIframeRefresh);
+    Service.updateCatchSchemaValues(this.state.application.id, this.state.application.schemaValues)
+    .then(this.triggerIframeRefresh());
   }
 
-  triggerIframeRefresh() {
-    this.setState({iframeUri:catchBase + this.state.uri + '/page?'+Math.random()});
+  triggerIframeRefresh(target) {
+    target = target || 'page';
+    this.setState({iframeTarget: target});
+    this.setState({iframeUri:catchBase + this.state.application.uri + '/'+target+'?'+Math.random()});
   }
 
   iframeStyle() {
@@ -161,7 +189,7 @@ class FacebookApplication extends Component {
       const applicationFields = this.state.applicationFields;
       applicationFields.push({name:newField.name, label:newField.label, required: newField.required});
       this.setState({applicationFields: applicationFields});
-      Service.updateApplicationFields(this.state.id, this.state.applicationFields);
+      Service.updateApplicationFields(this.state.application.id, this.state.applicationFields);
       newField.name = "";
       newField.label = "";
       newField.required = false;
@@ -229,7 +257,7 @@ class FacebookApplication extends Component {
     const fields = this.state.section === 'fields' ? this.constructFields() : null;
 
     const status = (()=>{
-         switch(this.state.status) {
+         switch(this.state.application.status) {
                case 'DEVELOPMENT': return (<div>Currently in development. <button className="btn btn-primary">Go live</button></div>);
                case 'LIVE': return (<div>App is live.  You cannot make changes. <button className="btn btn-primary">Archive</button></div>);
                case 'ARCHIVE': return (<div>Archived app. <button className="btn btn-primary">Duplicate</button></div>);
@@ -238,50 +266,58 @@ class FacebookApplication extends Component {
              }
     })();
 
-    const editApp = this.state.status === 'DEVELOPMENT' ? (
-      <div className="card mb-3">
-        <div className="card-header">
-          Edit application
-        </div>
-        <div className="card-body">
-          <ul className="nav nav-tabs">
-            <li className="nav-item">
-              <a style={{cursor:'pointer'}} className={this.state.section === 'template' ? "nav-link active" : "nav-link"} onClick={() => this.show('template')}>Edit template</a>
-            </li>
-            <li className="nav-item">
-              <a style={{cursor:'pointer'}} className={this.state.section === 'images' ? "nav-link active" : "nav-link"} onClick={() => this.show('images')}>Upload images</a>
-            </li>
-            <li className="nav-item">
-              <a style={{cursor:'pointer'}} className={this.state.section === 'fields' ? "nav-link active" : "nav-link"} onClick={() => this.show('fields')}>Add fields</a>
-            </li>
-          </ul>
-          {schema}
-          {images}
-          {fields}
-        </div>
+    const editApp = this.state.application.status === 'DEVELOPMENT' ? (<BootstrapCard heading={"Edit application"} body={(
+      <div>
+        <ul className="nav nav-tabs">
+          <li className="nav-item">
+            <a style={{cursor:'pointer'}} className={this.state.section === 'template' ? "nav-link active" : "nav-link"} onClick={() => this.show('template')}>Edit template</a>
+          </li>
+          <li className="nav-item">
+            <a style={{cursor:'pointer'}} className={this.state.section === 'images' ? "nav-link active" : "nav-link"} onClick={() => this.show('images')}>Upload images</a>
+          </li>
+          <li className="nav-item">
+            <a style={{cursor:'pointer'}} className={this.state.section === 'fields' ? "nav-link active" : "nav-link"} onClick={() => this.show('fields')}>Add fields</a>
+          </li>
+        </ul>
+        {schema}
+        {images}
+        {fields}
       </div>
-    ) : null;
+  )}/>)
+ : null;
 
       return (
       <div className="container-fluid h-100">
       <div className="row h-100">
         <div className="col-lg-7">
-          <div className="card mb-3">
-            <div className="card-header">
-              Status
-            </div>
-            <div className="card-body">
-              {status}
-            </div>
-          </div>
+          <BootstrapCard heading="Status" body={status} />
+          <CatchAppDetails app={this.state.application} change={this.updateApplication}/>
           {editApp}
         </div>
         <div className="col-lg-5 h-100">
           <div className="navestylemenublock sticky-top">
-            <div><i onClick={this.viewDesktop} className="fa fa-desktop fa-2x" aria-hidden="true" style={{cursor:"pointer"}}></i> <i style={{cursor:"pointer"}} className="fa fa-mobile fa-2x" aria-hidden="true" onClick={this.viewMobile}></i> </div>
+            <div>
+            <ul className="nav nav-pills">
+              <li className="nav-item">
+                <i onClick={this.viewDesktop} className="fa fa-desktop fa-2x" aria-hidden="true" style={{cursor:"pointer"}}></i> <i style={{cursor:"pointer"}} className="fa fa-mobile fa-2x" aria-hidden="true" onClick={this.viewMobile}></i>
+              </li>
+              <li className="nav-item">&nbsp;</li>
+              <li className="nav-item">
+                <a className={this.state.iframeTarget === 'page' ? "nav-link active" : "nav-link"} onClick={e => this.triggerIframeRefresh('page')}>Application</a>
+              </li>
+              <li className="nav-item">
+                <a className={this.state.iframeTarget === 'terms' ? "nav-link active" : "nav-link"} onClick={e => this.triggerIframeRefresh('terms')}>Terms</a>
+              </li>
+              <li className="nav-item">
+                <a className={this.state.iframeTarget === 'thanks' ? "nav-link active" : "nav-link"} onClick={e => this.triggerIframeRefresh('thanks')}>Thanks page</a>
+              </li>
+            </ul>
+            </div>
             <div className="resizer">
               <iframe title="previewIframe" ref={(f) => this.iframe = f } src={this.state.iframeUri} style={this.iframeStyle()}/>
             </div>
+
+
           </div>
 
         </div>
@@ -299,14 +335,14 @@ const Field = ({field, app}) => {
   if (field.type === 'Text' && field.multiline) {
     return (
       <div className="form-group">
-        <label>{field.label}</label> <textarea name={field.name} type="text" className="form-control" onChange={app.handleSchemaInputChange} value={app.state.schemaValues[field.name]}/>
+        <label>{field.label}</label> <textarea name={field.name} type="text" className="form-control" onChange={app.handleSchemaInputChange} value={app.state.application.schemaValues[field.name]}/>
       </div>
     );
 
   } else if (field.type === 'Text' ) {
     return (
       <div className="form-group">
-        <label>{field.label}</label> <input name={field.name} type="text" className="form-control" onChange={app.handleSchemaInputChange} value={app.state.schemaValues[field.name]}/>
+        <label>{field.label}</label> <input name={field.name} type="text" className="form-control" onChange={app.handleSchemaInputChange} value={app.state.application.schemaValues[field.name]}/>
       </div>
     );
   } else if (field.type === 'Image') {
@@ -319,7 +355,7 @@ const Field = ({field, app}) => {
     return (
     <div className="form-group">
       <label>{field.label}</label>
-      <select name={field.name} onChange={app.handleSchemaInputChange} value={app.state.schemaValues[field.name]}>
+      <select name={field.name} onChange={app.handleSchemaInputChange} value={app.state.application.schemaValues[field.name]}>
         <option value={null}>Select an image</option>
         {app.state.images.map((image, index) => (<option key={index} value={image}>{image}</option>))}
 

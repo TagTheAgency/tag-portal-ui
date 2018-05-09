@@ -165,6 +165,21 @@ const Service = {
     });
   },
 
+  updateCatchApplication: (id, app) => {
+    const url = catchApiBase + 'application/' + id;
+    const update = {
+      name: app.name,
+      facebookId: app.facebookId,
+      facebookPath: app.facebookPath,
+      dropboxPath: app.dropboxPath
+    }
+
+    return Auth.fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify(update)
+    });
+  },
+
 //  updateCatchValues: (id, name, value) => {
 //    const url = catchApiBase + 'application/' +id+'/'+name;
 //    return Auth.fetch(url, {
