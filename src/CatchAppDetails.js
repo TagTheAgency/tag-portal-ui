@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Service from './components/Service.js';
 import BootstrapCard from './components/BootstrapCard.js';
 import ReactTable from 'react-table';
+import ReactTooltip from 'react-tooltip';
 import './FacebookApplication.css';
 
 class CatchAppDetails extends Component {
@@ -69,7 +70,17 @@ class CatchAppDetails extends Component {
       <div className="form-group row" key="2">
         <label className="col-form-label col-sm-3">Facebook id:</label>
         <div className="col-sm-8"><input name="facebookId" className="form-control" type="text" value={facebookId} onChange={this.handleInputChange} /></div>
-        <div className="col-sm-1 pt-2"><i className="fa fa-question-circle" aria-hidden="true"></i></div>
+        <div className="col-sm-1 pt-2"><a data-tip data-for='facebookIdHelp'><i className="fa fa-question-circle" aria-hidden="true"></i></a></div>
+          <ReactTooltip id='facebookIdHelp' type='info' place='left'>
+            <h3>Facebook id</h3>
+            <p>This is the unique id of the Facebook page you want to embed this <em>Catch</em> app in</p>
+            <ol>
+              <li>Log into facebook and open the client's page</li>
+              <li>Go to the 'about' tab</li>
+              <li>Scroll to the bottom to find the page id</li>
+              <li>Copy and paste it here</li>
+            </ol>
+          </ReactTooltip>
       </div>,
       <div className="form-group row" key="3">
         <label className="col-form-label col-sm-3">Facebook path:</label>
@@ -83,7 +94,7 @@ class CatchAppDetails extends Component {
         <label className="col-form-label col-sm-3">Dropbox path (if applicable):</label>
         <div name="dropboxPath" className="col-sm-4 form-control-plaintext">/TAG the agency Team Folder/Applications/</div>
         <div className="col-sm-4"><input name="dropboxPath" className="form-control" type="text" value={dropboxPath} onChange={this.handleInputChange}/></div>
-      </div>]
+      </div>  ]
     }/>
   );
   }

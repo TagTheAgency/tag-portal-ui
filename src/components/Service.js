@@ -166,7 +166,7 @@ const Service = {
   },
 
   updateCatchApplication: (id, app) => {
-    const url = catchApiBase + 'application/' + id;
+    const url = catchApiBase + 'application/' + id + '/update';
     const update = {
       name: app.name,
       facebookId: app.facebookId,

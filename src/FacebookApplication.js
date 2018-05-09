@@ -34,8 +34,8 @@ class FacebookApplication extends Component {
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSchemaInputChange = this.handleSchemaInputChange.bind(this);
-    this.ajaxUpdate = this.debounce(this.ajaxUpdate, 3000, false);
-    this.ajaxUpdateSchema = this.debounce(this.ajaxUpdateSchema, 3000, false);
+    this.ajaxUpdate = this.debounce(this.ajaxUpdate, 1000, false);
+    this.ajaxUpdateSchema = this.debounce(this.ajaxUpdateSchema, 1000, false);
     this.iframeStyle = this.iframeStyle.bind(this);
     this.viewDesktop = this.viewDesktop.bind(this);
     this.viewMobile = this.viewMobile.bind(this);
@@ -303,13 +303,13 @@ class FacebookApplication extends Component {
               </li>
               <li className="nav-item">&nbsp;</li>
               <li className="nav-item">
-                <a className={this.state.iframeTarget === 'page' ? "nav-link active" : "nav-link"} onClick={e => this.triggerIframeRefresh('page')}>Application</a>
+                <a tabIndex="1" style={{cursor:'pointer'}} className={this.state.iframeTarget === 'page' ? "nav-link active" : "nav-link"} onClick={e => this.triggerIframeRefresh('page')}>Application</a>
               </li>
               <li className="nav-item">
-                <a className={this.state.iframeTarget === 'terms' ? "nav-link active" : "nav-link"} onClick={e => this.triggerIframeRefresh('terms')}>Terms</a>
+                <a tabIndex="1" style={{cursor:'pointer'}} className={this.state.iframeTarget === 'terms' ? "nav-link active" : "nav-link"} onClick={e => this.triggerIframeRefresh('terms')}>Terms</a>
               </li>
               <li className="nav-item">
-                <a className={this.state.iframeTarget === 'thanks' ? "nav-link active" : "nav-link"} onClick={e => this.triggerIframeRefresh('thanks')}>Thanks page</a>
+                <a tabIndex="1" style={{cursor:'pointer'}} className={this.state.iframeTarget === 'thanks' ? "nav-link active" : "nav-link"} onClick={e => this.triggerIframeRefresh('thanks')}>Thanks page</a>
               </li>
             </ul>
             </div>
