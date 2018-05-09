@@ -171,7 +171,8 @@ const Service = {
       name: app.name,
       facebookId: app.facebookId,
       facebookPath: app.facebookPath,
-      dropboxPath: app.dropboxPath
+      dropboxPath: app.dropboxPath,
+      terms: app.terms
     }
 
     return Auth.fetch(url, {

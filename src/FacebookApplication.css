@@ -1,10 +1,27 @@
-.sticky-top {
-    position: fixed;
-    top: 73px;
-    z-index: 1020;
-    bottom: 20px;
-    max-height: calc(100vh - 100px);
-    overflow: hidden;
-    width: 100%;
-    max-width: 800px;
+.bd-toc {
+  position: sticky;
+  top: 1rem;
+  height: calc(100vh - 1rem);
+  overflow-y: auto;
+
+  order: 2;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  font-size: .875rem;
+}
+
+#catchPreviewColumn {
+  position:fixed;
+  right: 0;
+  top: 60px;
+  width: 800px;
+
+}
+
+#catchEditColumn {
+  width: calc(100% - 800px);
+}
+iframe {
+  display: block;
+  margin: auto;
 }

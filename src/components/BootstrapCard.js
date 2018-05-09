@@ -6,7 +6,7 @@ class BootstrapCard extends Component {
     super(props);
 
     this.state = {
-      showing:true
+      showing:props.initial == null ? true : props.initial
     };
 
     this.showHide = this.showHide.bind(this);
@@ -26,7 +26,7 @@ class BootstrapCard extends Component {
       <div className="card mb-3">
         <div className="card-header">
           <div className="float-right" ><button className="btn btn-outline-primary" onClick={this.showHide}>{icon}</button></div>
-          <div className="float-left">
+          <div className="float-left pt-2">
             {this.props.heading}
           </div>
         </div>

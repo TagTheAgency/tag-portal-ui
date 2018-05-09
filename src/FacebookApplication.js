@@ -28,7 +28,6 @@ class FacebookApplication extends Component {
         template: null,
         iframeUri: null,
         iframeTarget: 'page',
-        section: 'template',
         newField: {name:"",label:"",required:false}
       };
 
@@ -44,7 +43,6 @@ class FacebookApplication extends Component {
     this.constructFields = this.constructFields.bind(this);
     this.triggerIframeRefresh = this.triggerIframeRefresh.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
-    this.show = this.show.bind(this);
     this.handleNewField = this.handleNewField.bind(this);
     this.updateApplication = this.updateApplication.bind(this);
   }
@@ -105,10 +103,6 @@ class FacebookApplication extends Component {
       });
   }
 
-  show(which) {
-    this.setState({section:which});
-  }
-
   updateApplication(app) {
     console.log("Updating application: ", app);
 
@@ -150,7 +144,7 @@ class FacebookApplication extends Component {
   }
 
   triggerIframeRefresh(target) {
-    target = target || 'page';
+    target = target || this.state.iframeTarget;
     this.setState({iframeTarget: target});
     this.setState({iframeUri:catchBase + this.state.application.uri + '/'+target+'?'+Math.random()});
   }
@@ -175,6 +169,7 @@ class FacebookApplication extends Component {
     return this.state.images == null ? (<p>Loading images</p>)
       : (
       <div>
+        <b>Upload images here to make them available to the template</b>
         <div className="form-group">
           <label>Upload images</label>
           <input type="file" name="fileUpload" onChange={(e) => this.uploadFile(e.target.files)} />
@@ -218,14 +213,15 @@ class FacebookApplication extends Component {
       accessor: 'label'
     }, {
       Header: 'Required',
-      accessor: 'required'
+      accessor: 'required',
+      Cell: props => props.value ? "required" : "optional"
     }];
 
-    return this.state.applicationFields == null ? (<p>Loading fields</p>)
+    return this.state.application.applicationFields == null ? (<p>Loading fields</p>)
       : (
         <div>
         <ReactTable
-          data={this.state.applicationFields}
+          data={this.state.application.applicationFields}
           columns={columns}
           showPagination={false}
           minRows={1}
@@ -250,11 +246,11 @@ class FacebookApplication extends Component {
 
   render() {
 
-    const schema = this.state.section === 'template' ? this.constructSchema() : null;
+    const schema = this.constructSchema();
 
-    const images = this.state.section === 'images' ? this.constructImages() : null;
+    const images = this.constructImages();
 
-    const fields = this.state.section === 'fields' ? this.constructFields() : null;
+    const fields = this.constructFields();
 
     const status = (()=>{
          switch(this.state.application.status) {
@@ -266,35 +262,25 @@ class FacebookApplication extends Component {
              }
     })();
 
-    const editApp = this.state.application.status === 'DEVELOPMENT' ? (<BootstrapCard heading={"Edit application"} body={(
-      <div>
-        <ul className="nav nav-tabs">
-          <li className="nav-item">
-            <a style={{cursor:'pointer'}} className={this.state.section === 'template' ? "nav-link active" : "nav-link"} onClick={() => this.show('template')}>Edit template</a>
-          </li>
-          <li className="nav-item">
-            <a style={{cursor:'pointer'}} className={this.state.section === 'images' ? "nav-link active" : "nav-link"} onClick={() => this.show('images')}>Upload images</a>
-          </li>
-          <li className="nav-item">
-            <a style={{cursor:'pointer'}} className={this.state.section === 'fields' ? "nav-link active" : "nav-link"} onClick={() => this.show('fields')}>Add fields</a>
-          </li>
-        </ul>
-        {schema}
-        {images}
-        {fields}
-      </div>
-  )}/>)
- : null;
+    const editApp = this.state.application.status === 'DEVELOPMENT' ? (<BootstrapCard initial={false} heading={"Customise look"} body={schema}/>) : null;
+
+    const uploadImages = this.state.application.status === 'DEVELOPMENT' ? (<BootstrapCard initial={false} heading="Upload images" body={images}/>) : null;
+
+    const modifyFields = this.state.application.status === 'DEVELOPMENT' ? (<BootstrapCard initial={false} heading="Collect additional information" body={fields} />) : null;
 
       return (
       <div className="container-fluid h-100">
-      <div className="row h-100">
-        <div className="col-lg-7">
+      <div id="catchEditColumn" className="row h-100">
+        <div className="col-lg-12">
           <BootstrapCard heading="Status" body={status} />
           <CatchAppDetails app={this.state.application} change={this.updateApplication}/>
           {editApp}
+          {uploadImages}
+          {modifyFields}
         </div>
-        <div className="col-lg-5 h-100">
+      </div>
+      <div id="catchPreviewColumn">
+        <div className="h-100">
           <div className="navestylemenublock sticky-top">
             <div>
             <ul className="nav nav-pills">
