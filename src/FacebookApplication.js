@@ -181,10 +181,11 @@ class FacebookApplication extends Component {
   handleNewField(e) {
     const newField = this.state.newField;
     if (e.target.type === 'submit') {
-      const applicationFields = this.state.applicationFields;
+      const application = this.state.application;
+      const applicationFields = application.applicationFields;
       applicationFields.push({name:newField.name, label:newField.label, required: newField.required});
-      this.setState({applicationFields: applicationFields});
-      Service.updateApplicationFields(this.state.application.id, this.state.applicationFields);
+      this.setState({application: application});
+      Service.updateApplicationFields(this.state.application.id, this.state.application.applicationFields);
       newField.name = "";
       newField.label = "";
       newField.required = false;
