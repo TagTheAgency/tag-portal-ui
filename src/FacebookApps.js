@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Service from './components/Service.js';
 import ReactTable from 'react-table';
 import FacebookApplication from './FacebookApplication.js';
+import CreateCatchApplication from './CreateCatchApplication.js';
 import BreadCrumbs from "./components/BreadCrumbs.js";
 
 import { Route } from "react-router-dom";
@@ -48,14 +49,7 @@ constructor(props) {
 }
 
 createApplication() {
-  Service.createCatchApplication("Untitled")
-  .then(data => {
-    const applications = this.state.applications;
-    applications.push(data);
-    this.setState({"applications":applications});
-    this.props.history.replace('/catch/'+data.id);
-
-  });
+  this.props.history.push('/catch/new');
 }
 
 componentDidMount() {
@@ -69,7 +63,8 @@ render() {
 
       <div className="content-wrapper">
       <Route path={`${this.props.match.url}/`} exact render={(props)=><ApplicationList {...props}  createApplication={this.createApplication} applications={this.state.applications}/>} />
-      <Route path={`${this.props.match.url}/:id`} component={FacebookApplication} />
+      <Route path={`${this.props.match.url}/new`} exact component={CreateCatchApplication} />
+      <Route path={`${this.props.match.url}/:id(\\d+)`} component={FacebookApplication} />
       </div>
   );
 }

@@ -26,6 +26,9 @@ import 'react-table/react-table.css'
     accessor: 'createdDate',
     Cell: props => <span className='date'>{new Date(props.value).toLocaleDateString()}</span>
   }, {
+    Header: 'Status',
+    accessor: 'status'
+  },{
     Header: 'Actions',
     columns: [{
       Header: 'Edit',

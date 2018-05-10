@@ -74,6 +74,9 @@ class FacebookApplication extends Component {
         console.log(this.state);
         Service.getFacebookTemplate(this.state.application.template).then(data => this.setState({template:data}));
         Service.getCatchImages(this.state.application.id).then(data => this.setState({images:data}));
+    } else {
+      this.setState({notFound: true});
+      this.props.history.push('new');
     }} );
 
   }
@@ -97,7 +100,7 @@ class FacebookApplication extends Component {
 
   uploadFile(files) {
     const file = files[0];
-    Service.uploadCatchFile(this.state.id, file)
+    Service.uploadCatchFile(this.state.application.id, file)
     .then(data => {
         this.setState({images:data});
       });
