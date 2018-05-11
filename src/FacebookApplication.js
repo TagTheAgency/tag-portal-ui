@@ -71,7 +71,7 @@ class FacebookApplication extends Component {
       if (data) {
         this.setState({application:data});
         this.triggerIframeRefresh();
-        console.log(this.state);
+
         Service.getFacebookTemplate(this.state.application.template).then(data => this.setState({template:data}));
         Service.getCatchImages(this.state.application.id).then(data => this.setState({images:data}));
     } else {
@@ -95,7 +95,7 @@ class FacebookApplication extends Component {
 
   ajaxUpdate(name) {
     Service.updateCatchApplication(this.state.application.id, this.state.application)
-    .then(this.triggerIframeRefresh());
+    .then(setTimeout(this.triggerIframeRefresh,1000));
   }
 
   uploadFile(files) {
@@ -116,12 +116,20 @@ class FacebookApplication extends Component {
     this.setState({application:application});
 
     this.ajaxUpdate(app.name);
+
+    if (app.name === 'template') {
+      this.setState({template:null});
+      Service.getFacebookTemplate(app.value).then(data => this.setState({template:data}));
+    }
   }
 
   handleSchemaInputChange(event) {
     const target = event.target;
-    const value = target.type === 'file' ? target.files[0] : target.value;
+    const value = target.type === 'checkbox' ? target.checked :
+                  target.type === 'file' ? target.files[0] :
+                  target.value;
     const name = target.name;
+
 
     const schemaValues = this.state.application.schemaValues;
     const application = this.state.application;
@@ -143,7 +151,7 @@ class FacebookApplication extends Component {
 
   ajaxUpdateSchema(name) {
     Service.updateCatchSchemaValues(this.state.application.id, this.state.application.schemaValues)
-    .then(this.triggerIframeRefresh());
+    .then(() => this.triggerIframeRefresh());
   }
 
   triggerIframeRefresh(target) {
@@ -352,6 +360,13 @@ const Field = ({field, app}) => {
       </select>
     </div>
     )
+  } else if (field.type === 'Boolean') {
+    return (
+      <div className="form-check">
+        <input id={"field_"+field.name} name={field.name} type="checkbox" className="form-check-input" onChange={app.handleSchemaInputChange} checked={app.state.application.schemaValues[field.name]}/>
+        <label htmlFor={"field_"+field.name}>{field.label}</label>
+      </div>
+    );
   }
 }
 

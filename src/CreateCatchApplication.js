@@ -15,6 +15,7 @@ class CreateCatchApplication extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.createApplication = this.createApplication.bind(this);
     this.cancel = this.cancel.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
 
   handleInputChange(event) {
@@ -31,6 +32,7 @@ class CreateCatchApplication extends Component {
 
     Service.createCatchApplication(this.state.name)
     .then(data => {
+      console.log("Created, got an id of ", data.id);
       this.props.history.push('/catch/'+data.id);
     });
 
@@ -40,6 +42,11 @@ class CreateCatchApplication extends Component {
     this.props.history.push('../catch');
   }
 
+  onSubmit(e) {
+    //e.preventDefault();
+    //this.createApplication();
+    //return false;
+  }
 
   render() {
 
@@ -47,7 +54,7 @@ class CreateCatchApplication extends Component {
       <div className="row justify-content-md-center">
         <div className="col-lg-8">
     <BootstrapCard initial={true} heading="Create application" body={(
-      <div className="form-group row">
+        <div className="form-group row">
         <label className="col-form-label col-sm-3">Application name:</label>
         <div className="col-sm-5"><input className="form-control" type="text" value={this.state.name} onChange={this.handleInputChange}/></div>
         <div className="col-sm-4"><button className="btn btn-primary mr-4" onClick={this.createApplication}>Create Application</button><button className="btn btn-danger" onClick={this.cancel}>Cancel</button></div>

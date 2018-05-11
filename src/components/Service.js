@@ -145,7 +145,15 @@ const Service = {
   },
 
   getFacebookTemplate: (id) => {
-    const url = catchApiBase + 'template/1';// FIXME +id;
+    if (id == null) {
+      return {then:() => []};
+    }
+    const url = catchApiBase + 'template/'+id;// FIXME +id;
+    return Auth.fetch(url);
+  },
+
+  getFacebookTemplates: () => {
+    const url = catchApiBase + 'templates';
     return Auth.fetch(url);
   },
 
@@ -172,7 +180,8 @@ const Service = {
       facebookId: app.facebookId,
       facebookPath: app.facebookPath,
       dropboxPath: app.dropboxPath,
-      terms: app.terms
+      terms: app.terms,
+      template: app.template
     }
 
     return Auth.fetch(url, {

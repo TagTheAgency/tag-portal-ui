@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import BootstrapCard from './components/BootstrapCard.js';
 import ReactTooltip from 'react-tooltip';
+import Service from './components/Service.js';
 import './FacebookApplication.css';
 
 class CatchAppDetails extends Component {
@@ -10,7 +11,8 @@ class CatchAppDetails extends Component {
 
     this.state = {
       dropboxBase:'/TAG the agency Team Folder/Applications/',
-      termsHeight:'50px'
+      termsHeight:'50px',
+      templates:[]
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -18,6 +20,14 @@ class CatchAppDetails extends Component {
     this.focusTerms = this.focusTerms.bind(this);
     this.blurTerms = this.blurTerms.bind(this);
 
+
+
+  }
+
+  componentDidMount() {
+    Service.getFacebookTemplates().then(data => {
+      this.setState({templates:data});
+    });
   }
 
   stripDropbox(val) {
@@ -72,6 +82,7 @@ class CatchAppDetails extends Component {
     const dropboxPath = this.stripDropbox(this.props.app.dropboxPath);
     const uri = this.props.app.uri == null ? '' : process.env.REACT_APP_CATCH_ENDPOINT + '/app/' + this.props.app.uri + '/page';
     const terms = this.props.app.terms == null ? '' : this.props.app.terms;
+    const template = this.props.app.template == null ? '' : this.props.app.template;
 
     return (
     <BootstrapCard initial={false} heading="Application setup" body={[
@@ -110,6 +121,10 @@ class CatchAppDetails extends Component {
       </div>,
       <div className="form-group row" key="6">
         <label className="col-form-label col-sm-3">Choose template</label>
+        <select name="template" onChange={this.handleInputChange} value={template}>
+            <option value={''}>Select a template to customise</option>
+            {this.state.templates.map((template, index) => (<option key={index} value={template}>{template}</option>))}
+          </select>
       </div>,
       <div className="form-group row" key="7">
         <label className="col-form-label col-sm-3">Terms and Conditions</label>

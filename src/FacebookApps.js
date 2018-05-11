@@ -4,6 +4,7 @@ import ReactTable from 'react-table';
 import FacebookApplication from './FacebookApplication.js';
 import CreateCatchApplication from './CreateCatchApplication.js';
 import BreadCrumbs from "./components/BreadCrumbs.js";
+//import {CSVLink} from 'react-csv';
 
 import { Route } from "react-router-dom";
 
@@ -12,7 +13,20 @@ import 'react-select/dist/react-select.css';
 const catchRoot = `${process.env.PUBLIC_URL}/catch`;
 
 const showEntries = (id) => {
-  Service.getCatchEntries(id).then(data => console.log(data));
+  Service.getCatchEntries(id).then(data =>
+    //TODO either use react-csv or just write own.
+    console.log(flattenEntries(data)));
+}
+
+const flattenEntries = (data) => {
+
+  data.forEach(el => {
+    Object.keys(el.additionalFields).forEach((k) => el[k] = el.additionalFields[k]);
+    delete el.additionalFields;
+  });
+
+  return data;
+
 }
 
 const columns = [{
