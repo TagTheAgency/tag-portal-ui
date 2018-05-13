@@ -361,9 +361,13 @@ const Field = ({field, app}) => {
     </div>
     )
   } else if (field.type === 'Boolean') {
+    let checked = app.state.application.schemaValues[field.name];
+    if (checked === 'false') {
+      checked = false;
+    }
     return (
       <div className="form-check">
-        <input id={"field_"+field.name} name={field.name} type="checkbox" className="form-check-input" onChange={app.handleSchemaInputChange} checked={app.state.application.schemaValues[field.name]}/>
+        <input id={"field_"+field.name} name={field.name} type="checkbox" className="form-check-input" onChange={app.handleSchemaInputChange} checked={checked}/>
         <label htmlFor={"field_"+field.name}>{field.label}</label>
       </div>
     );
