@@ -10,11 +10,12 @@ import Application from './Application.js';
 
 class App extends Component {
   render() {
+		const rootPath = process.env.PUBLIC_URL;
     return (
     	<Router>
     		<Switch>
-    			<Route path="/login" component={Login} />
-					<Route path="/" component={Application} />
+    			<Route path={rootPath + "/login"} component={Login} />
+					<Route path={rootPath + "/"} component={Application} />
     		</Switch>
     	</Router>
     );

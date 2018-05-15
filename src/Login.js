@@ -17,8 +17,9 @@ class Login extends Component {
 	}
 
 	componentWillMount() {
+		const rootPath = process.env.PUBLIC_URL;
 	    if(this.Auth.loggedIn()) {
-	        this.props.history.replace('/dashboard');
+	        this.props.history.replace(rootPath + '/dashboard');
 			}
 	}
 
@@ -33,7 +34,8 @@ class Login extends Component {
 						alert(res.error);
 						return;
 					}
-					const redirect = this.props.location.state.redirect || '/dashboard';
+					const rootPath = process.env.PUBLIC_URL;
+					const redirect = this.props.location.state.redirect || (rootPath + '/dashboard');
 //					console.log('replacing this.props.history', this.props.history);
            this.props.history.replace(redirect);
         })

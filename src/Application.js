@@ -9,14 +9,15 @@ import { Switch, Route } from "react-router-dom";
 
 class Application extends Component {
   render() {
+    const rootPath = process.env.PUBLIC_URL;
     return (
       <div className="App">
         <Navigation logout={this.props.logout} />
 			<Switch>
-				<Route path="/dashboard" component={Dashboard} />
-				<Route path="/pitch" component={Pitch} />
-        <Route path="/briefs" component={Briefs} />
-        <Route path="/catch" component={FacebookApps} />
+				<Route path={rootPath + "/dashboard"} component={Dashboard} />
+				<Route path={rootPath + "/pitch"} component={Pitch} />
+        <Route path={rootPath + "/briefs"} component={Briefs} />
+        <Route path={rootPath + "/catch"} component={FacebookApps} />
 				<Route component={Dashboard}/>
 			</Switch>
     </div>

@@ -18,7 +18,7 @@ class PitchItem extends Component {
         modifiedDate: 0,
         createdUser: '',
         modifiedUser: '',
-        pages: [{id:1}, {id:2}],
+        pages: [],
         notFound: false
       };
 
@@ -89,6 +89,7 @@ class PitchItem extends Component {
       return <Redirect to='/pitch'/>;
     }
     const pitchRoot = `${process.env.PUBLIC_URL}/pitch`;
+    console.log("Rendering a total of "+this.state.pages.length+" pages");
     return (
       <div>
         <BreadCrumbs elements={[{"link":pitchRoot, "name":"Pitches"},{"link":pitchRoot+'/'+this.state.id, "name":this.state.title}]} />

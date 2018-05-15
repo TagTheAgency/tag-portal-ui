@@ -15,9 +15,11 @@ export default function withAuth(AuthComponent) {
     }
 
     componentWillMount() {
+      const rootDir = process.env.PUBLIC_URL;
       if (!Auth.loggedIn()) {
         console.log("Not logged in, forwarding to login");
-        this.props.history.replace({pathname: '/login', state: { redirect: this.props.location.pathname }});
+
+        this.props.history.replace({pathname: rootDir + '/login', state: { redirect: this.props.location.pathname }});
       }
       else {
         try {
@@ -28,14 +30,15 @@ export default function withAuth(AuthComponent) {
         }
         catch(err){
           Auth.logout();
-          this.props.history.replace('/login');
+          this.props.history.replace(rootDir + '/login');
         }
       }
     }
 
     logout() {
+      const rootDir = process.env.PUBLIC_URL;
       Auth.logout();
-      this.props.history.replace('/login');
+      this.props.history.replace(rootDir + '/login');
     }
 
     render() {

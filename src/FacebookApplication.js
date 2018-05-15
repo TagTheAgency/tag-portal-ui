@@ -266,7 +266,7 @@ class FacebookApplication extends Component {
 
     const status = (()=>{
          switch(this.state.application.status) {
-               case 'DEVELOPMENT': return (<div>Currently in development. <button className="btn btn-primary">Go live</button></div>);
+               case 'DEVELOPMENT': return (<div>Currently in development. <button className="btn btn-primary">Go live</button> https://www.facebook.com/dialog/pagetab?app_id=225469081521750&redirect_uri=https://clientapps.relay.tagtheagency.com/app/</div>);
                case 'LIVE': return (<div>App is live.  You cannot make changes. <button className="btn btn-primary">Archive</button></div>);
                case 'ARCHIVE': return (<div>Archived app. <button className="btn btn-primary">Duplicate</button></div>);
                default:

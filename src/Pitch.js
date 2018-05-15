@@ -59,7 +59,7 @@ class Pitch extends Component {
       const pitches = this.state.pitches;
       pitches.push(data);
       this.setState({"pitches":pitches});
-      this.props.history.replace('/pitch/'+data.id);
+      this.props.history.replace(pitchRoot + '/'+data.id);
 
     });
   }

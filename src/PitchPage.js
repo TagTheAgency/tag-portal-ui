@@ -154,7 +154,7 @@ class PitchPage extends Component {
         <label htmlFor={"content" + this.state.id}>Page content</label>
 
 
-  <textarea className="form-control pageContent" id={"content" + this.state.id} name="oldtext" rows="10" value={this.state.text} onChange={this.handleInputChange}></textarea>
+  <textarea className="form-control pageContent" id={"content" + this.state.id} name="text" rows="10" value={this.state.text} onChange={this.handleInputChange}></textarea>
       </div>
     ) : ( null)
 
