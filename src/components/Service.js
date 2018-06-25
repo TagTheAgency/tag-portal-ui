@@ -17,7 +17,11 @@ const Service = {
   },
 
   getProjects: (client) => {
-    return Auth.fetch(briefApiBase + 'clients/'+client+'/projects');
+    if (client) {
+      return Auth.fetch(briefApiBase + 'clients/'+client+'/projects');
+    } else {
+      return Auth.fetch(briefApiBase + 'projects')
+    }
   },
 
   getProjectUsers: (project) => {
