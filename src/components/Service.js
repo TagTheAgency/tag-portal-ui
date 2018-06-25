@@ -17,7 +17,15 @@ const Service = {
   },
 
   getProjects: (client) => {
-    return Auth.fetch(briefApiBase + 'projects/' + client);
+    return Auth.fetch(briefApiBase + 'clients/'+client+'/projects');
+  },
+
+  getProjectUsers: (project) => {
+    return Auth.fetch(briefApiBase + 'project/'+project+'/users');
+  },
+
+  getYoutubeTrends: () => {
+    return Auth.fetch(apiBase+'/trends/videos');
   },
 
   getPitches: () => {

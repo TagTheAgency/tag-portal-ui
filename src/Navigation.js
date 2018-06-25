@@ -54,6 +54,12 @@ class Navigation extends React.Component {
 			            <span className="nav-link-text">Catch</span>
 			          </a>
 			        </li>
+							<li className="nav-item" data-toggle="tooltip" data-placement="right" title="Trends">
+								<a className="nav-link" href={process.env.PUBLIC_URL + '/trends'}>
+									<i className="fa fa-fw fa-youtube"></i>
+									<span className="nav-link-text">Trends</span>
+								</a>
+							</li>
 			        <li className="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
 			          <a className="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
 			            <i className="fa fa-fw fa-wrench"></i>
