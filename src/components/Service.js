@@ -28,8 +28,12 @@ const Service = {
     return Auth.fetch(briefApiBase + 'project/'+project+'/users');
   },
 
-  getYoutubeTrends: () => {
-    return Auth.fetch(apiBase+'/trends/videos');
+  getProjectTasks: (project) => {
+    return Auth.fetch(briefApiBase + 'project/'+project+'/tasks');
+  },
+
+  getYoutubeTrends: (country) => {
+    return Auth.fetch(apiBase+'/trends/videos/'+country);
   },
 
   getPitches: () => {
