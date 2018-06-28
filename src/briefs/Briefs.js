@@ -3,6 +3,7 @@ import Service from '../components/Service.js';
 import Select from 'react-select';
 import CreateClient from './CreateClient.js';
 import TaskAssignment from './TaskAssignment.js';
+import UserAssignment from './UserAssignment.js';
 import 'react-select/dist/react-select.css';
 
 class Briefs extends Component {
@@ -36,13 +37,13 @@ class Briefs extends Component {
   }
 
   showCreateClient() {
-    this.setState({showCreateClient:true, selectedOption: null, projects:[]});
+    this.setState({showCreateClient:true, selectedOption: null, projects:[],projectUsers:null, projectTasks: null});
   }
   hideCreateClient() {
     this.setState({showCreateClient:false});
   }
   doCreateClient() {
-    this.showCreateClient();
+    //this.showCreateClient();
     //todo
   }
 
@@ -77,6 +78,7 @@ class Briefs extends Component {
     ) : this.state.selectedOption == null ? (<p>First select a client</p>) : <button className="btn btn-primary">Create new project</button>;
 
     const projectTasks = this.state.projectTasks == null ? null : [<p><strong>Project Tasks</strong></p>,<ul className="list-group">{this.state.projectTasks.map(el => <TaskAssignment key={el.id} task={el}/>)}</ul>];
+    const projectUsers = this.state.projectUsers == null ? null : [<p><strong>Project Staff</strong></p>,<ul className="list-group">{this.state.projectUsers.map(el => <UserAssignment key={el.id} user={el}/>)}</ul>];
 
 
     return (
@@ -101,6 +103,7 @@ class Briefs extends Component {
               </div>
               <div className="col-sm-4">
                 {projectTasks}
+                {projectUsers}
               </div>
             </div>
             <div className="row">
