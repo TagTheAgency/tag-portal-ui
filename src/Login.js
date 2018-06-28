@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import GoogleLogin from 'react-google-login';
-//import Authentication from './components/Authentication.js';
 import AuthService from './components/AuthService';
 import './Login.css';
-var FontAwesome = require('react-fontawesome');
 const rootPath = process.env.PUBLIC_URL;
 
 class Login extends Component {
@@ -26,7 +24,6 @@ class Login extends Component {
 	}
 
 	responseGoogle(response) {
-		console.log(response);
 
 		if (response && response.tokenId) {
 
@@ -37,7 +34,6 @@ class Login extends Component {
 						return;
 					}
 					const redirect = this.props.location.state.redirect || (rootPath + '/dashboard');
-//					console.log('replacing this.props.history', this.props.history);
            this.props.history.replace(redirect);
         })
         .catch(err =>{
@@ -47,8 +43,6 @@ class Login extends Component {
 	};
 
 	render() {
-		console.log("Login is rendering");
-		console.log(this.props.location);
 
 		const errorMessage = this.state.error ? (<div className="alert alert-danger" role="alert">Error: {this.state.error}</div>) : null;
 		return (

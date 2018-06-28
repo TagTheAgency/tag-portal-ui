@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Service from '../components/Service.js';
 import Select from 'react-select';
 import CreateClient from './CreateClient.js';
+import TaskAssignment from './TaskAssignment.js';
 import 'react-select/dist/react-select.css';
 
 class Briefs extends Component {
@@ -26,7 +27,7 @@ class Briefs extends Component {
 
   handleChange(selectedOption) {
     this.setState({ selectedOption });
-    this.setState({"projects":[]});
+    this.setState({"projects":[], projectUsers:null, projectTasks: null});
     if (selectedOption != null) {
       Service.getProjects(selectedOption.id).then(data => this.setState({"projects":data}));
       this.setState({showCreateClient:false});
@@ -46,9 +47,8 @@ class Briefs extends Component {
   }
 
   selectProject(project) {
-    console.log('selecting project', project);
-    Service.getProjectUsers(project.id);
-    Service.getProjectTasks(project.id);
+    Service.getProjectUsers(project.id).then(data => this.setState({"projectUsers":data}));
+    Service.getProjectTasks(project.id).then(data => this.setState({"projectTasks":data}));
   }
 
   componentDidMount() {
@@ -66,11 +66,18 @@ class Briefs extends Component {
     const projects = this.state.projects != null && this.state.projects.length > 0 ? (
       <div>
         <div className="list-group">
-          {this.state.projects.map(el => <button key={el.code} type="button" className="list-group-item list-group-item-action" onClick={(e) => this.selectProject(el)}>{el.name}</button>)}
+          {this.state.projects.map(el =>
+            <button key={el.code} type="button" className="list-group-item d-flex justify-content-between align-items-center" onClick={(e) => this.selectProject(el)}>
+              {el.name}
+              {el.billable ? [<span className={"badge " + (el.fixedFee ? "badge-info" : "badge-success") + " badge-pill" }>{el.fixedFee ? "Fixed" : "T & M"}</span>] : <span className="badge badge-warning badge-pill">non-billable</span>}
+            </button>)}
         </div>
         <p><strong>Or</strong></p> <button className="btn btn-primary">Create new project</button>
       </div>
     ) : this.state.selectedOption == null ? (<p>First select a client</p>) : <button className="btn btn-primary">Create new project</button>;
+
+    const projectTasks = this.state.projectTasks == null ? null : [<p><strong>Project Tasks</strong></p>,<ul className="list-group">{this.state.projectTasks.map(el => <TaskAssignment key={el.id} task={el}/>)}</ul>];
+
 
     return (
         <div className="content-wrapper">
@@ -91,6 +98,9 @@ class Briefs extends Component {
               <div className="col-sm-4">
               <p><strong>Select project</strong></p>
               {projects}
+              </div>
+              <div className="col-sm-4">
+                {projectTasks}
               </div>
             </div>
             <div className="row">
