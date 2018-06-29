@@ -99,8 +99,8 @@ class Briefs extends Component {
               <CreateClient pushClient={this.doCreateClient} show={this.state.showCreateClient} doShow={this.showCreateClient} cancel={this.hideCreateClient}/>
               </div>
               <div className="col-sm-4">
-              <p><strong>Select project</strong></p>
-              {projects}
+                <p><strong>Select project</strong></p>
+                <ProjectList selectedClient={this.state.selectedOption} projects={this.state.projects} onSelect={this.selectProject} />
               </div>
               <div className="col-sm-4">
                 {projectTasks}
@@ -116,6 +116,37 @@ class Briefs extends Component {
         </div>
     );
   }
+}
+const clientList = () => {
+
+}
+
+const ProjectList = ({selectedClient, projects, onSelect}) => {
+  //investigate https://medium.com/@dai_shi/attaching-state-to-stateless-function-components-in-react-db317a9e83ad
+  const show = {hideDisabled:false};
+
+  const showHideDisabled = () => {show.hideDisabled = !show.hideDisabled;}
+
+  if (selectedClient == null) {
+    return (<p>First select a client</p>);
+  }
+  if (projects != null && projects.length > 0) {
+    return (
+      <div>
+        <input id="showHide" type="checkbox" onClick={(e) => showHideDisabled} /><label htmlFor="showHide">Hide disabled</label>
+        <div className="list-group">
+          {projects.map(el => {
+            if (show.showHide && !el.active) return;
+            return (<button key={el.code} type="button" className={"list-group-item d-flex justify-content-between align-items-center " + (el.active ? "" : " disabled")} onClick={(e) => onSelect(el)}>
+              {el.name}
+              {el.billable ? [<span className={"badge " + (el.fixedFee ? "badge-info" : "badge-success") + " badge-pill" }>{el.fixedFee ? "Fixed" : "T & M"}</span>] : <span className="badge badge-warning badge-pill">non-billable</span>}
+            </button>)})}
+        </div>
+        <p><strong>Or</strong></p> <button className="btn btn-primary">Create new project</button>
+      </div>
+    );
+  }
+  return (<button className="btn btn-primary">Create new project</button>);
 }
 /*
 const CreateClient = ({doCreateClient, cancel}) => {
