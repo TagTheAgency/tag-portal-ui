@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Dashboard from './Dashboard.js';
 import Pitch from './Pitch.js';
-import Briefs from './Briefs.js';
+import Briefs from './briefs/Briefs.js';
 import Trends from './Trends.js';
 import FacebookApps from './FacebookApps.js';
 import withAuth from './components/withAuth';
