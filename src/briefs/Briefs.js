@@ -64,11 +64,12 @@ class Briefs extends Component {
     const { selectedOption, selectedProject } = this.state;
     console.log(selectedProject);
 
+
     const projects = this.state.projects != null && this.state.projects.length > 0 ? (
       <div>
         <div className="list-group">
           {this.state.projects.map(el =>
-            <button key={el.code} type="button" className="list-group-item d-flex justify-content-between align-items-center" onClick={(e) => this.selectProject(el)}>
+            <button key={el.code} type="button" className={"list-group-item d-flex justify-content-between align-items-center " + (el.active ? "" : " disabled")} onClick={(e) => this.selectProject(el)}>
               {el.name}
               {el.billable ? [<span className={"badge " + (el.fixedFee ? "badge-info" : "badge-success") + " badge-pill" }>{el.fixedFee ? "Fixed" : "T & M"}</span>] : <span className="badge badge-warning badge-pill">non-billable</span>}
             </button>)}

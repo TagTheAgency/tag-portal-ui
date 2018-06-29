@@ -7,8 +7,9 @@ class UserAssignment extends Component {
   }
 
   render() {
+    const disabledClasses = this.props.user.active ? "" : " disabled";
     return (
-      <li className="list-group-item">{this.props.user.user.name}</li>
+      <li className={"list-group-item " + disabledClasses}>{this.props.user.user.name}</li>
     )
   }
 }

@@ -7,8 +7,9 @@ class TaskAssignment extends Component {
   }
 
   render() {
+    const disabledClasses = this.props.task.active ? "" : " disabled";
     return (
-      <li className="list-group-item">{this.props.task.task.name}</li>
+      <li className={"list-group-item " + disabledClasses}>{this.props.task.task.name}</li>
     )
   }
 }
