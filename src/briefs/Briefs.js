@@ -11,7 +11,8 @@ class Briefs extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showCreateClient:false
+      showCreateClient:false,
+      hideDisabledProjects: false
     }
 
     this.createBrief = this.createBrief.bind(this);
@@ -20,6 +21,7 @@ class Briefs extends Component {
     this.showCreateClient = this.showCreateClient.bind(this);
     this.hideCreateClient = this.hideCreateClient.bind(this);
     this.doCreateClient = this.doCreateClient.bind(this);
+    this.showHideDisabled = this.showHideDisabled.bind(this);
   }
 
   createBrief() {
@@ -46,6 +48,10 @@ class Briefs extends Component {
     //this.showCreateClient();
     //todo
   }
+  showHideDisabled() {
+    this.setState({hideDisabledProjects: !this.state.hideDisabledProjects});
+    console.log("Show hide disabled", this.state);
+  }
 
   selectProject(project) {
     Service.getProjectUsers(project.id).then(data => this.setState({"projectUsers":data}));
@@ -65,7 +71,7 @@ class Briefs extends Component {
     console.log(selectedProject);
 
 
-    const projects = this.state.projects != null && this.state.projects.length > 0 ? (
+    /*const projects = this.state.projects != null && this.state.projects.length > 0 ? (
       <div>
         <div className="list-group">
           {this.state.projects.map(el =>
@@ -76,7 +82,7 @@ class Briefs extends Component {
         </div>
         <p><strong>Or</strong></p> <button className="btn btn-primary">Create new project</button>
       </div>
-    ) : this.state.selectedOption == null ? (<p>First select a client</p>) : <button className="btn btn-primary">Create new project</button>;
+    ) : this.state.selectedOption == null ? (<p>First select a client</p>) : <button className="btn btn-primary">Create new project</button>; */
 
     const projectTasks = this.state.projectTasks == null ? null : [<p><strong>Project Tasks</strong></p>,<ul className="list-group">{this.state.projectTasks.map(el => <TaskAssignment key={el.id} task={el}/>)}</ul>];
     const projectUsers = this.state.projectUsers == null ? null : [<p><strong>Project Staff</strong></p>,<ul className="list-group">{this.state.projectUsers.map(el => <UserAssignment key={el.id} user={el}/>)}</ul>];
@@ -99,8 +105,8 @@ class Briefs extends Component {
               <CreateClient pushClient={this.doCreateClient} show={this.state.showCreateClient} doShow={this.showCreateClient} cancel={this.hideCreateClient}/>
               </div>
               <div className="col-sm-4">
-                <p><strong>Select project</strong></p>
-                <ProjectList selectedClient={this.state.selectedOption} projects={this.state.projects} onSelect={this.selectProject} />
+                <p><strong>Select project</strong> <input id="showHide" type="checkbox" onChange={this.showHideDisabled} /><label htmlFor="showHide">Hide disabled</label></p>
+                <ProjectList selectedClient={this.state.selectedOption} projects={this.state.projects} onSelect={this.selectProject} hideDisabled={this.state.hideDisabledProjects}/>
               </div>
               <div className="col-sm-4">
                 {projectTasks}
@@ -121,11 +127,8 @@ const clientList = () => {
 
 }
 
-const ProjectList = ({selectedClient, projects, onSelect}) => {
+const ProjectList = ({selectedClient, projects, onSelect, hideDisabled}) => {
   //investigate https://medium.com/@dai_shi/attaching-state-to-stateless-function-components-in-react-db317a9e83ad
-  const show = {hideDisabled:false};
-
-  const showHideDisabled = () => {show.hideDisabled = !show.hideDisabled;}
 
   if (selectedClient == null) {
     return (<p>First select a client</p>);
@@ -133,13 +136,13 @@ const ProjectList = ({selectedClient, projects, onSelect}) => {
   if (projects != null && projects.length > 0) {
     return (
       <div>
-        <input id="showHide" type="checkbox" onClick={(e) => showHideDisabled} /><label htmlFor="showHide">Hide disabled</label>
+
         <div className="list-group">
           {projects.map(el => {
-            if (show.showHide && !el.active) return;
-            return (<button key={el.code} type="button" className={"list-group-item d-flex justify-content-between align-items-center " + (el.active ? "" : " disabled")} onClick={(e) => onSelect(el)}>
+            if (hideDisabled && !el.active) return;
+            return (<button key={el.id} type="button" className={"list-group-item d-flex justify-content-between align-items-center " + (el.active ? "" : " disabled")} onClick={(e) => onSelect(el)}>
               {el.name}
-              {el.billable ? [<span className={"badge " + (el.fixedFee ? "badge-info" : "badge-success") + " badge-pill" }>{el.fixedFee ? "Fixed" : "T & M"}</span>] : <span className="badge badge-warning badge-pill">non-billable</span>}
+              {el.billable ? <span className={"badge " + (el.fixedFee ? "badge-info" : "badge-success") + " badge-pill" }>{el.fixedFee ? "Fixed" : "T & M"}</span> : <span className="badge badge-warning badge-pill">non-billable</span>}
             </button>)})}
         </div>
         <p><strong>Or</strong></p> <button className="btn btn-primary">Create new project</button>
