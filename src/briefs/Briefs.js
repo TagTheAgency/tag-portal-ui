@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Service from '../components/Service.js';
 import Select from 'react-select';
 import CreateClient from './CreateClient.js';
+import CreateProject from './CreateProject.js';
 import TaskAssignment from './TaskAssignment.js';
 import UserAssignment from './UserAssignment.js';
 import 'react-select/dist/react-select.css';
@@ -12,6 +13,7 @@ class Briefs extends Component {
     super(props);
     this.state = {
       showCreateClient:false,
+      showCreateProject:false,
       hideDisabledProjects: false
     }
 
@@ -20,6 +22,8 @@ class Briefs extends Component {
     this.selectProject = this.selectProject.bind(this);
     this.showCreateClient = this.showCreateClient.bind(this);
     this.hideCreateClient = this.hideCreateClient.bind(this);
+    this.showCreateProject = this.showCreateProject.bind(this);
+    this.hideCreateProject = this.hideCreateProject.bind(this);
     this.doCreateClient = this.doCreateClient.bind(this);
     this.showHideDisabled = this.showHideDisabled.bind(this);
   }
@@ -30,7 +34,7 @@ class Briefs extends Component {
 
   handleChange(selectedOption) {
     this.setState({ selectedOption });
-    this.setState({"projects":[], projectUsers:null, projectTasks: null});
+    this.setState({"projects":[], projectUsers:null, projectTasks: null, showCreateProject:false});
     if (selectedOption != null) {
       Service.getProjects(selectedOption.id).then(data => this.setState({"projects":data}));
       this.setState({showCreateClient:false});
@@ -39,10 +43,16 @@ class Briefs extends Component {
   }
 
   showCreateClient() {
-    this.setState({showCreateClient:true, selectedOption: null, projects:[],projectUsers:null, projectTasks: null});
+    this.setState({showCreateClient:true, selectedOption: null, projects:[],projectUsers:null, projectTasks: null, showCreateProject:false});
   }
   hideCreateClient() {
-    this.setState({showCreateClient:false});
+    this.setState({showCreateClient:false, showCreateProject:false});
+  }
+  showCreateProject() {
+    this.setState({showCreateProject:true, projectUsers:null, projectTasks: null});
+  }
+  hideCreateProject() {
+    this.setState({showCreateProject:false});
   }
   doCreateClient() {
     //this.showCreateClient();
@@ -106,7 +116,8 @@ class Briefs extends Component {
               </div>
               <div className="col-sm-4">
                 <p><strong>Select project</strong> <input id="showHide" type="checkbox" onChange={this.showHideDisabled} /><label htmlFor="showHide">Hide disabled</label></p>
-                <ProjectList selectedClient={this.state.selectedOption} projects={this.state.projects} onSelect={this.selectProject} hideDisabled={this.state.hideDisabledProjects}/>
+                <ProjectList selectedClient={this.state.selectedOption} projects={this.state.projects} onSelect={this.selectProject} hideDisabled={this.state.hideDisabledProjects} showCreateProject={this.showCreateProject}/>
+                <CreateProject pushProject={this.doCreateClient} show={this.state.showCreateProject} doShow={this.showCreateProject} cancel={this.hideCreateProject}/>
               </div>
               <div className="col-sm-4">
                 {projectTasks}
@@ -127,7 +138,7 @@ const clientList = () => {
 
 }
 
-const ProjectList = ({selectedClient, projects, onSelect, hideDisabled}) => {
+const ProjectList = ({selectedClient, projects, onSelect, hideDisabled, showCreateProject}) => {
   //investigate https://medium.com/@dai_shi/attaching-state-to-stateless-function-components-in-react-db317a9e83ad
 
   if (selectedClient == null) {
@@ -145,60 +156,11 @@ const ProjectList = ({selectedClient, projects, onSelect, hideDisabled}) => {
               {el.billable ? <span className={"badge " + (el.fixedFee ? "badge-info" : "badge-success") + " badge-pill" }>{el.fixedFee ? "Fixed" : "T & M"}</span> : <span className="badge badge-warning badge-pill">non-billable</span>}
             </button>)})}
         </div>
-        <p><strong>Or</strong></p> <button className="btn btn-primary">Create new project</button>
+        <p><strong>Or</strong></p> <button className="btn btn-primary" onClick={showCreateProject}>Create new project</button>
       </div>
     );
   }
-  return (<button className="btn btn-primary">Create new project</button>);
+  return (<button className="btn btn-primary" onClick={showCreateProject}>Create new project</button>);
 }
-/*
-const CreateClient = ({doCreateClient, cancel}) => {
-  const create = doCreateClient;
-  const hide = cancel;
-
-  const newClient = {
-    name: "",
-    contactName: "",
-    contactEmail: "",
-    address: ""
-  }
-
-  const handleInputChange = (event) => {
-    console.log("Handling an input change with event ", event.target, event.target.value, event.target.name);
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-
-    newClient[name] = value;
-
-    newClient.name="Kittens";
-    console.log(newClient);
-    //his.setState({});
-  }
-
-  return (
-  <div className="border-top my-3 py-3">
-  <h3>Create new client</h3>
-  <p>Please ensure the client does not already exist first!</p>
-  <div className="form-group">
-    <label htmlFor="clientName">Client Name</label>
-    <input type="text" className="form-control" id="clientName" placeholder="Enter client name" value={newClient.name} name="name" onChange={handleInputChange}/>
-  </div>
-  <div className="form-group">
-    <label htmlFor="contactName">Contact Name</label>
-    <input type="text" className="form-control" id="contactName" placeholder="Enter contact name" value={newClient.contactName} name="contactName" onChange={handleInputChange}/>
-  </div>
-  <div className="form-group">
-    <label htmlFor="contactEmail">Contact email</label>
-    <input type="email" className="form-control" id="contactEmail" placeholder="name@example.com" value={newClient.contactEmail} name="contactEmail" onChange={handleInputChange}/>
-  </div>
-  <div className="form-group">
-    <label htmlFor="address">Client Address</label>
-    <textarea className="form-control" id="address" rows="3" value={newClient.address} name="address" onChange={handleInputChange}></textarea>
-  </div>
-  <button type="submit" className="btn btn-primary" onClick={() => create()}>Create client</button>
-  <button type="button" className="btn btn-danger" onClick={() => hide()}>Cancel</button>
-    </div>
-)};*/
 
 export default Briefs;
