@@ -3,6 +3,7 @@ import Dashboard from './Dashboard.js';
 import Pitch from './Pitch.js';
 import Briefs from './briefs/Briefs.js';
 import Trends from './Trends.js';
+import Instagram from './Instagram.js';
 import FacebookApps from './FacebookApps.js';
 import withAuth from './components/withAuth';
 import Navigation from './Navigation.js';
@@ -18,8 +19,9 @@ class Application extends Component {
 				<Route path={rootPath + "/dashboard"} component={Dashboard} />
 				<Route path={rootPath + "/pitch"} component={Pitch} />
         <Route path={rootPath + "/briefs"} component={Briefs} />
-          <Route path={rootPath + "/trends"} component={Trends} />
+        <Route path={rootPath + "/trends"} component={Trends} />
         <Route path={rootPath + "/catch"} component={FacebookApps} />
+        <Route path={rootPath + "/insta"} component={Instagram} />
 				<Route component={Dashboard}/>
 			</Switch>
     </div>

@@ -211,6 +211,17 @@ const Service = {
     return Auth.fetch(url);
   },
 
+  getInstagramFeed: (hash) => {
+    const url = catchApiBase + 'instascrape/feed/' + hash;
+    return Auth.fetch(url);
+  },
+
+  reviewInstagram: (hash, id, review) => {
+    const url = catchApiBase + 'instascrape/feed/' + hash + "/" + id + "/" + review;
+    return Auth.fetch(url,{
+      method: 'POST'
+    }, true, false);
+  },
 //  updateCatchValues: (id, name, value) => {
 //    const url = catchApiBase + 'application/' +id+'/'+name;
 //    return Auth.fetch(url, {
