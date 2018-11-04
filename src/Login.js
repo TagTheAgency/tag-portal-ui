@@ -51,7 +51,7 @@ class Login extends Component {
 				<div className="container">
 					<div className="row justify-content-center login-main-content">
 						<div className="col-12 col-md-6 row justify-content-center align-items-center img-container">
-							<img id="login-img" src={rootPath+'img/hero.png'}/>
+							<img id="login-img" src={rootPath+'/img/hero.png'}/>
 						</div>
 						<div className="col-12 col-md-6 row login-details justify-content-center align-items-center">
 							<div className="col-12 row justify-content-center">

@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import Service from './components/Service.js';
 import ReactTooltip from 'react-tooltip';
 import ReactTable from 'react-table';
+import {
+      PopupboxManager,
+      PopupboxContainer
+    } from 'react-popupbox';
+import "react-popupbox/dist/react-popupbox.css";
+import "./Instagram.css";
 
 const formatStatus = (status) => {
   if (status === 'UNREVIEWED') {
@@ -20,16 +26,18 @@ const createButtons = (value, approve, decline) => {
   ]
 }
 
-const columns = (approve, decline) => {
+
+
+const columns = (approve, decline, popup) => {
   return [{
     Header: 'Preview',
     accessor: 'img', // String-based value accessors!
-    Cell: props => {return (<img src={props.original.img} style={{width:"100px",height:"100px"}} />)}
+    Cell: props => {return (<img onClick={() => {popup(props.original.img,props.original.url)}} src={props.original.img} style={{width:"100px",height:"100px"}} />)}
   }, {
     Header: 'Link',
     accessor: 'url'
   }, {
-    Header: 'Cuurently',
+    Header: 'Currently',
     maxWidth: 150,
     accessor: 'status',
     Cell: props => formatStatus(props.original.status)
@@ -52,6 +60,7 @@ class Instagram extends Component {
     }
     this.approveEntry = this.approveEntry.bind(this);
     this.declineEntry = this.declineEntry.bind(this);
+    this.openPopupbox = this.openPopupbox.bind(this);
 
   }
 
@@ -80,16 +89,25 @@ class Instagram extends Component {
     });
   }
 
+  openPopupbox(img, url) {
+    console.log("opening a popupbox with", img);
+    const content = (<img src={img} />);
+    PopupboxManager.open({
+      content
+    })
+  }
+
   render() {
     return (
       <div className="content-wrapper">
         <div className="container-fluid">
         <h2>Melbourne Cup Feed</h2>
-
+        <PopupboxContainer />
         <ReactTable
           data={this.state.data}
-          columns={columns(this.approveEntry, this.declineEntry)}
+          columns={columns(this.approveEntry, this.declineEntry, this.openPopupbox)}
         />
+
         </div>
       </div>
     )
